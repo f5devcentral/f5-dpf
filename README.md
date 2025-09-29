@@ -576,12 +576,6 @@ Connection to 192.168.68.97 closed.
 The DPU itself doesn't run dhcpclient, so it is only reachable via console.
 
 
-## Issues
-
-- Can't run on kind, k8s nodes must be reachable via network, because DPU's are instructed via redfish to pull image from a web server created by DPF Operator on worker node. The URL contains node IP
-- Issue with mTLS error. Upgrading BMC to 25.7 didn't help
-- Not clear how often discovery process runs. How can we trigger it?
-
 ## Resources
 
 - https://github.com/NVIDIA/doca-platform/blob/public-release-v25.7/docs/public/user-guides/zero-trust/use-cases/passthrough/README.md
