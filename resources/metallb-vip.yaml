@@ -1,0 +1,23 @@
+# ipaddresspool-vip.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  namespace: metallb-system
+  name: dpucluster-vip
+spec:
+  addresses:
+    - $DPUCLUSTER_VIP/32
+  autoAssign: true
+---
+# l2advertisement-vip.yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  namespace: metallb-system
+  name: lan-l2
+spec:
+  # by default advertises all pools; keeping simple here
+  # (you can restrict with ipAddressPools: ["lan-vip-pool"] or interfaces)
+  ipAddressPools:
+    - dpucluster-vip
+  interfaces: ["$DPUCLUSTER_INTERFACE"]   # restrict which node NIC(s) advertise

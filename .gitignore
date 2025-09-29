@@ -1,0 +1,6 @@
+.env
+local-path-provisioner
+*.bfb
+*.cfg
+ISSUE*.md
+*.orig
