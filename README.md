@@ -1,13 +1,16 @@
 # f5-dpf
 
+Proof-of-concept DPF ZT (Zero-Trust) deployment using a single node k0s kubernetes
+cluster running on baremetal or in a VM with bridged network access based on
+[RDG for DPF Zero Trust (DPF-ZT)](https://docs.nvidia.com/networking/display/public/sol/rdg+for+dpf+zero+trust+(dpf-zt)).
 
 ## Requirements
 
-- Linux to run k0s (https://k0sproject.io) 
+- Linux (amd64) to run k0s (https://k0sproject.io)
 - helm https://helm.sh
 - helmfile https://github.com/helmfile/helmfile
 - kubectl
-- dpfctl (https://docs.nvidia.com/networking/display/dpf2507/dpf+cli+-+dpfctl#)
+- 1 or more Nvidia Bluefield-3 DPUs
 
 ## Preparation
 
