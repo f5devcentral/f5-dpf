@@ -39,6 +39,6 @@ LATEST=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest 
 
 # Download and install
 curl -L "https://github.com/helmfile/helmfile/releases/download/${LATEST}/helmfile_${LATEST#v}_linux_amd64.tar.gz" -o helmfile.tar.gz
-tar -xzf helmfile.tar.gz
+tar -xzf helmfile.tar.gz helmfile
 sudo mv helmfile /usr/local/bin/
 rm helmfile.tar.gz
