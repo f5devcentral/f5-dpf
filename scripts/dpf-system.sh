@@ -5,7 +5,7 @@ ts() { date '+%Y-%m-%d %H:%M:%S'; }
 log() { printf '%s [%s] %s\n' "$(ts)" "$1" "$2" >&2; }
 info(){ log INFO "$1"; }
 warn(){ log WARN "$1"; }
-err(){ log ERROR "$1"; }
+err(){ log ERROR "$1"; exit 1; }
 
 source .env
 export DPUCLUSTER_INTERFACE DPUCLUSTER_VIP
@@ -13,6 +13,8 @@ export IP_RANGE_START IP_RANGE_END
 export TARGETCLUSTER_API_SERVER_HOST
 
 build() {
+  info "check if interface $DPUCLUSTER_INTERFACE exists ..."
+  ip -br a show dev $DPUCLUSTER_INTERFACE || err "interface $DPUCLUSTER_INTERFACE (DPUCLUSTER_INTERFACE) doesnt exist"
   info "kubectl create ns dpu-cplane-tenant1 ..."
   kubectl create ns dpu-cplane-tenant1 || true
 

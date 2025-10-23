@@ -8,7 +8,7 @@ ts() { date '+%Y-%m-%d %H:%M:%S'; }
 log() { printf '%s [%s] %s\n' "$(ts)" "$1" "$2" >&2; }
 info(){ log INFO "$1"; }
 warn(){ log WARN "$1"; }
-err(){ log ERROR "$1"; }
+err(){ log ERROR "$1"; exit 1; }
 
 source .env
 
@@ -110,6 +110,8 @@ delete() {
   sudo k0s stop 2>/dev/null || true
   info "resetting k0s"
   sudo k0s reset -f 2>/dev/null || sudo k0s reset 2>/dev/null || true
+  sudo systemctl stop k0scontroller 2>/dev/null || true
+  sudo systemctl disable k0scontroller 2>/dev/null || true
   info "removing /usr/local/bin/k0s"
   sudo rm -f /usr/local/bin/k0s /tmp/k0s.yaml
   info "delete complete"
