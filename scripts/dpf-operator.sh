@@ -8,7 +8,7 @@ warn(){ log WARN "$1"; }
 err(){ log ERROR "$1"; }
 
 source .env
-export NVIDIA_DOCA_HELM_REGISTRY 
+export HELM_REGISTRY_REPO_URL
 export DPF_VERSION
 
 build() {
@@ -18,7 +18,7 @@ build() {
   popd
 
   info "installing dpf-operator ..."
-  helm repo add --force-update dpf-repository ${NVIDIA_DOCA_HELM_REGISTRY}
+  helm repo add --force-update dpf-repository ${HELM_REGISTRY_REPO_URL}
   helm repo update
   helm upgrade --install -n dpf-operator-system dpf-operator dpf-repository/dpf-operator --version=${DPF_VERSION}
 

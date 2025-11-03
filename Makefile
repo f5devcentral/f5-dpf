@@ -10,7 +10,7 @@ all: cluster local-storage bfb-pv create-bmc-pwd dpf-operator dpf-system
 	@echo ""
 	@echo "Next steps to add worker nodes with DPUs:"
 	@echo "1. (optional) expose argocd server UI with 'make argocd'"
-	@echo "2. deploy DPF object/use case with 'make passthru'"
+	@echo "2. deploy DPF object/use cases with 'make passthru' or 'make hbn-pf'"
 	@echo "3. verify status with scripts/check-dpusets.sh"
 	@echo ""
 	@echo "================================================================================"
@@ -38,6 +38,9 @@ argocd:
 
 passthru:
 	scripts/passthru-dpf-objects.sh
+
+hbn-pf:
+	scripts/hbn-pf-dpf-objects.sh
 
 clean-all:
 	scripts/k0s-cluster.sh delete

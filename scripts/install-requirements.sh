@@ -42,3 +42,5 @@ curl -L "https://github.com/helmfile/helmfile/releases/download/${LATEST}/helmfi
 tar -xzf helmfile.tar.gz helmfile
 sudo mv helmfile /usr/local/bin/
 rm helmfile.tar.gz
+
+sudo snap install yq

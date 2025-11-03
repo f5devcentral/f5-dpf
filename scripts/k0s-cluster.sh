@@ -97,7 +97,7 @@ while true; do
     exit 1
   fi
 
-  info "==> $not_ready / $total pods not ready yet... waiting %SLEEP secs"
+  info "==> $not_ready / $total pods not ready yet... waiting $SLEEP secs"
   sleep "$SLEEP"
 done
 
