@@ -12,6 +12,41 @@ cluster running on baremetal or in a VM with bridged network access based on
 - kubectl
 - 1 or more Nvidia Bluefield-3 DPUs
 
+## Lab Setup
+
+```
++--------------------------+         +--------------------------+
+|                          |         |         worker2          |
+|             +------------+         +------------+             |
+|             |            |         |            |             |
+|   enp7s0np0 +  bf-3   p0 +---------+ p0  bf-3   + enp7s0np0   |
+|             |  dpu1      |         |     dpu2   |             |
+|   enp8s0np0 +         p1 +---------+ p1         + enp8s0np0   |
+|             |            |         |            |             |
+|             |   oob-net0 +--.   .--+ oob-net0   |             |
+|             +------------+  |   |  +------------+             |
+|                          |  |   |  |                          |
+|                   enp1s0 |  |   |  | enp1s0                   |
++----------------------+---+  |   |  +----+---------------------+
+                       |      |   |       |
+                       |      |   |       |
+           ---+--------+------+---+-------+--------+-----
+              |  oob-network 192.168.68.0/22       |.1
+              |                                    |
+       +------+------+                          +--+--+
+       | k0s-cluster |                          | IGW |---{ Internet }
+       +-------------+                          +-----+
+```
+
+Instead of a typical spine / leaf setup, two DPU's are interconnected
+back to back with DAC cables, interconnecting both high speed DPU ports.
+HBN with BGP unnumbered will establish peering between DPU nodes. 
+
+The actual physical setup is composed of a single baremetal server with
+2 Bluefield-3 DPU's and 2 KVM VMs, worker1 and worker2, using PCI passthru
+for the DPU's. 
+
+
 ## Preparation
 
 ```
