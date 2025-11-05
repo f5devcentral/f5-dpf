@@ -321,3 +321,40 @@ RPKI validation codes: V valid, I invalid, N Not found
 
 Displayed  2 routes and 3 total paths
 ```
+
+Access kamaji cluster via kubeconfig:
+
+```
+$ scripts/kamaji-cluster-access.sh
+kubeconfig written to dpu-cplane-tenant1.kubeconfig
+
+Kubernetes control plane is running at https://192.168.68.20:30114
+CoreDNS is running at https://192.168.68.20:30114/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+$ export KUBECONFIG=$PWD/dpu-cplane-tenant1.kubeconfig
+
+$ kubectl get pod -A
+NAMESPACE             NAME                                                             READY   STATUS    RESTARTS   AGE
+dpf-operator-system   dpu-cplane-tenant1-doca-hbn-8d5f9-ds-77bwg                       2/2     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p                       2/2     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-nvidia-k8s-ipam-controller-6cb8f65fc5-8hkt7   1/1     Running   0          2d
+dpf-operator-system   dpu-cplane-tenant1-nvidia-k8s-ipam-node-ds-5jccf                 1/1     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-nvidia-k8s-ipam-node-ds-c2h7z                 1/1     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-ovs-cni-arm64-dcnql                           1/1     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-ovs-cni-arm64-zgm92                           1/1     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-sfc-controller-node-ds-g7z42                  1/1     Running   0          47h
+dpf-operator-system   dpu-cplane-tenant1-sfc-controller-node-ds-rsr6p                  1/1     Running   0          47h
+dpf-operator-system   kube-flannel-ds-ppflq                                            1/1     Running   0          47h
+dpf-operator-system   kube-flannel-ds-sndqv                                            1/1     Running   0          47h
+dpf-operator-system   kube-multus-ds-6dmvw                                             1/1     Running   0          47h
+dpf-operator-system   kube-multus-ds-jqxg4                                             1/1     Running   0          47h
+dpf-operator-system   kube-sriov-device-plugin-4vthv                                   1/1     Running   0          47h
+dpf-operator-system   kube-sriov-device-plugin-dwxgr                                   1/1     Running   0          47h
+kube-system           coredns-796d84c46b-dtksm                                         1/1     Running   0          2d
+kube-system           coredns-796d84c46b-g7tq6                                         1/1     Running   0          2d
+kube-system           kube-proxy-9lzhl                                                 1/1     Running   0          47h
+kube-system           kube-proxy-j8cw8                                                 1/1     Running   0          47h
+```
+
