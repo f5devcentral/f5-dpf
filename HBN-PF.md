@@ -358,3 +358,60 @@ kube-system           kube-proxy-9lzhl                                          
 kube-system           kube-proxy-j8cw8                                                 1/1     Running   0          47h
 ```
 
+
+```
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# brctl show
+bridge name     bridge id               STP enabled     interfaces
+br_default              8000.4ef227be4c6c       no              vxlan48
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip link show dev pf0hpf_if    
+74: pf0hpf_if: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq master RED state UP mode DEFAULT group default qlen 1000
+    link/ether 0e:d6:7e:dc:e8:b7 brd ff:ff:ff:ff:ff:ff
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip link show red
+Device "red" does not exist.
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip -d link show RED
+11: RED: <NOARP,MASTER,UP,LOWER_UP> mtu 65575 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+    link/ether 96:15:10:96:87:f6 brd ff:ff:ff:ff:ff:ff promiscuity 0 minmtu 1280 maxmtu 65575 
+    vrf table 1003 addrgenmode eui64 numtxqueues 1 numrxqueues 1 gso_max_size 65536 gso_max_segs 65535 
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# 
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip -br link show type vrf
+mgmt             UP             0e:1a:3d:e8:bc:a5 <NOARP,MASTER,UP,LOWER_UP> 
+BLUE             UP             fa:1d:c0:7d:5e:59 <NOARP,MASTER,UP,LOWER_UP> 
+RED              UP             96:15:10:96:87:f6 <NOARP,MASTER,UP,LOWER_UP> 
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip link show dev pf0hpf_if  
+74: pf0hpf_if: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq master RED state UP mode DEFAULT group default qlen 1000
+    link/ether 0e:d6:7e:dc:e8:b7 brd ff:ff:ff:ff:ff:fff
+
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip link show master RED
+12: vlan4063_l3@br_default: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc noqueue master RED state UP mode DEFAULT group default qlen 1000
+    link/ether 4e:f2:27:be:4c:6c brd ff:ff:ff:ff:ff:ff
+74: pf0hpf_if: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq master RED state UP mode DEFAULT group default qlen 1000
+    link/ether 0e:d6:7e:dc:e8:b7 brd ff:ff:ff:ff:ff:ff
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip link show master BLUE
+10: vlan4006_l3@br_default: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9216 qdisc noqueue master BLUE state UP mode DEFAULT group default qlen 1000
+    link/ether 4e:f2:27:be:4c:6c brd ff:ff:ff:ff:ff:ff
+77: pf1hpf_if: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 9000 qdisc mq master BLUE state UP mode DEFAULT group default qlen 1000
+    link/ether da:64:8b:3a:2d:f2 brd ff:ff:ff:ff:ff:ff
+
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip route show table 1003
+unreachable default metric 4278198272 
+10.0.121.0/29 nhid 44 proto bgp metric 20 
+10.0.121.8/29 dev pf0hpf_if proto kernel scope link src 10.0.121.10 
+local 10.0.121.10 dev pf0hpf_if proto kernel scope host src 10.0.121.10 
+broadcast 10.0.121.15 dev pf0hpf_if proto kernel scope link src 10.0.121.10 
+127.0.0.0/8 dev RED proto kernel scope link src 127.0.0.1 
+local 127.0.0.1 dev RED proto kernel scope host src 127.0.0.1 
+local 127.0.1.1 dev RED proto kernel scope host src 127.0.0.1 
+broadcast 127.255.255.255 dev RED proto kernel scope link src 127.0.0.1 
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# 
+
+root@dpu-cplane-tenant1-doca-hbn-8d5f9-ds-pgv7p:/tmp# ip route show table 1002
+unreachable default metric 4278198272 
+10.0.122.0/29 nhid 43 proto bgp metric 20 
+10.0.122.8/29 dev pf1hpf_if proto kernel scope link src 10.0.122.10 
+local 10.0.122.10 dev pf1hpf_if proto kernel scope host src 10.0.122.10 
+broadcast 10.0.122.15 dev pf1hpf_if proto kernel scope link src 10.0.122.10 
+127.0.0.0/8 dev BLUE proto kernel scope link src 127.0.0.1 
+local 127.0.0.1 dev BLUE proto kernel scope host src 127.0.0.1 
+local 127.0.1.1 dev BLUE proto kernel scope host src 127.0.0.1 
+broadcast 127.255.255.255 dev BLUE proto kernel scope link src 127.0.0.1
+```
