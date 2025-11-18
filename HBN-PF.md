@@ -415,3 +415,80 @@ local 127.0.0.1 dev BLUE proto kernel scope host src 127.0.0.1
 local 127.0.1.1 dev BLUE proto kernel scope host src 127.0.0.1 
 broadcast 127.255.255.255 dev BLUE proto kernel scope link src 127.0.0.1
 ```
+
+ovs bridges on DPU:
+
+```
+root@dpu-node-mt2428xz0n1d-mt2428xz0n1d:/home/ubuntu# ovs-vsctl show
+2bc41997-03b1-4926-bfa8-69e50f7eb4b3
+    Bridge br-hbn
+        fail_mode: secure
+        datapath_type: netdev
+        Port pen3f0pf0sf5brhbn
+            Interface pen3f0pf0sf5brhbn
+                type: patch
+                options: {peer=pen3f0pf0sf5brsfc}
+        Port en3f0pf0sf19
+            Interface en3f0pf0sf19
+                type: dpdk
+        Port en3f0pf0sf9
+            Interface en3f0pf0sf9
+                type: dpdk
+        Port vxlan0
+            Interface vxlan0
+                type: vxlan
+                options: {explicit="true", remote_ip=flow, tos=inherit}
+        Port pen3f0pf0sf9brhbn
+            Interface pen3f0pf0sf9brhbn
+                type: patch
+                options: {peer=pen3f0pf0sf9brsfc}
+        Port pen3f0pf0sf10brhbn
+            Interface pen3f0pf0sf10brhbn
+                type: patch
+                options: {peer=pen3f0pf0sf10brsfc}
+        Port pen3f0pf0sf19brhbn
+            Interface pen3f0pf0sf19brhbn
+                type: patch
+                options: {peer=pen3f0pf0sf19brsfc}
+        Port en3f0pf0sf10
+            Interface en3f0pf0sf10
+                type: dpdk
+        Port en3f0pf0sf5
+            Interface en3f0pf0sf5
+                type: dpdk
+    Bridge br-sfc
+        fail_mode: secure
+        datapath_type: netdev
+        Port pf1hpf
+            Interface pf1hpf
+                type: dpdk
+        Port br-sfc
+            Interface br-sfc
+                type: internal
+        Port pen3f0pf0sf10brsfc
+            Interface pen3f0pf0sf10brsfc
+                type: patch
+                options: {peer=pen3f0pf0sf10brhbn}
+        Port p1
+            Interface p1
+                type: dpdk
+        Port pen3f0pf0sf5brsfc
+            Interface pen3f0pf0sf5brsfc
+                type: patch
+                options: {peer=pen3f0pf0sf5brhbn}
+        Port p0
+            Interface p0
+                type: dpdk
+        Port pf0hpf
+            Interface pf0hpf
+                type: dpdk
+        Port pen3f0pf0sf19brsfc
+            Interface pen3f0pf0sf19brsfc
+                type: patch
+                options: {peer=pen3f0pf0sf19brhbn}
+        Port pen3f0pf0sf9brsfc
+            Interface pen3f0pf0sf9brsfc
+                type: patch
+                options: {peer=pen3f0pf0sf9brhbn}
+    ovs_version: "3.1.0057"
+```
