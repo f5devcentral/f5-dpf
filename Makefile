@@ -42,5 +42,8 @@ passthru:
 hbn-pf:
 	scripts/hbn-pf-dpf-objects.sh
 
+kamaji:
+	scripts/kamaji-cluster-access.sh
+
 clean-all:
 	scripts/k0s-cluster.sh delete
