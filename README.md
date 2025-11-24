@@ -60,6 +60,17 @@ exports the specified path `$NFS_SERVER_PATH`
 Set `$DPUCLUSTER_VIP` to an IP in the same subnet and interface 
 `$DPUCLUSTER_INTERFACE` as the single node k0s cluster that will get created.
 
+## helper shell aliases
+
+The following aliases simplify accessing the kamaji cluster after it has been 
+deployed. `make kamaji` generates the kubeconfig.
+
+```
+make kamaji
+alias d='kubectl --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
+alias dk9s='k9s --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
+```
+
 ## Deploy
 
 ```
