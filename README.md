@@ -71,6 +71,14 @@ alias d='kubectl --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
 alias dk9s='k9s --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
 ```
 
+### Remove DPU lag configuration
+
+Currently DPU provisioning doesn't do a full hardware and configuration reset. In case
+the DPU was using LAG mode, remove it first. 
+See https://docs.nvidia.com/doca/sdk/link-aggregation/index.html#src-3233877782_id-.LinkAggregationv2.9.0LTS-RemovingLAGConfiguration
+
+
+
 ## Deploy
 
 ```
@@ -464,6 +472,11 @@ make clean-all
 
 
 ## Troubleshooting
+
+### failed to set up mTLS: failed to replace CA cert, unexpected response status: 500 Internal server
+
+Fixed this by flashing BMC on DPU and issue factory reset (scripts/factory-reset-dpu.sh).
+
 
 ### bf-bundle not ready.
 

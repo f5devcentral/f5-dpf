@@ -12,8 +12,7 @@ spec:
         k8s.v1.cni.cncf.io/networks: |-
           [
           {"name": "iprequest", "interface": "ip_lo", "cni-args": {"poolNames": ["loopback"], "poolType": "cidrpool"}},
-          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}},
-          {"name": "iprequest", "interface": "ip_pf1hpf", "cni-args": {"poolNames": ["pool2"], "poolType": "cidrpool", "allocateDefaultGateway": true}}
+          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}}
           ]
     helmChart:
       values:
@@ -42,6 +41,13 @@ spec:
                 evpn:
                   enable: on
                   route-advertise: {}
+                bridge:
+                  domain:
+                    br_default:
+                      vlan:
+                       '10':
+                          vni:
+                            '10': {}
                 interface:
                   lo:
                     ip:
@@ -58,10 +64,14 @@ spec:
                         {{ ipaddresses.ip_pf0hpf.cidr }}: {}
                       vrf: {{ config.vrf1 }}
                   pf1hpf_if:
-                    ip:
-                      address:
-                        {{ ipaddresses.ip_pf1hpf.cidr }}: {}
-                      vrf: {{ config.vrf2 }}
+                    bridge:
+                      domain:
+                        br_default:
+                          access: 10
+                  vlan10:
+                    type: svi
+                    vlan: 10
+
                 nve:
                   vxlan:
                     arp-nd-suppress: on
