@@ -2,6 +2,12 @@
 
 Source: https://github.com/NVIDIA/doca-platform/tree/public-release-v25.7/docs/public/user-guides/zero-trust/use-cases/hbn
 
+Each node gets 2 PF's:
+
+- pf0hpf_if: connected to vrf RED (evpn type 5), IP subnet per node
+- pf1hpf_if: connected to layer2 (evpn type 2), shared network across node
+
+
 Deploy with
 
 ```
