@@ -46,12 +46,15 @@ build() {
   local ns="dpf-operator-system"
   local owned_sel='svc.dpu.nvidia.com/owned-by-dpudeployment=dpf-operator-system_hbn'
   info "Ensure the DPUServices are created and have been reconciled..."
-  # First, wait until at least one matching DPUServices object exists
-  wait_for_resources "$ns" dpuservices -l "$owned_sel" || { err "DPUServices did not appear"; return 1; }
-  # Then wait for the ApplicationsReconciled condition
-  echo "reached"
-  kubectl wait --timeout="${KWAIT_TIMEOUT}s" --for=condition=ApplicationsReconciled -n "$ns" dpuservices -l "$owned_sel" || {
-    err "DPUServices did not reach ApplicationsReconciled"; return 1; }
+  while true; do
+    if kubectl wait --timeout="${KWAIT_TIMEOUT}s" --for=condition=ApplicationsReconciled -n "$ns" dpuservices -l "$owned_sel"; then
+        echo "Success: ApplicationsReconciled condition reached."
+        return
+    else
+        echo "Not ready yet. Retrying in 5 seconds..."
+        sleep 5
+    fi
+done
 
   info "Ensure the DPUServiceIPAMs have been reconciled..."
   kubectl wait --for=condition=DPUIPAMObjectReconciled --namespace dpf-operator-system dpuserviceipam --all

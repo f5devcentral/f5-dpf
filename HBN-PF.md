@@ -492,3 +492,207 @@ root@dpu-node-mt2428xz0n1d-mt2428xz0n1d:/home/ubuntu# ovs-vsctl show
                 options: {peer=pen3f0pf0sf9brhbn}
     ovs_version: "3.1.0057"
 ```
+
+
+```
+scripts/get-evpn-route.sh
+
+Namespace : dpf-operator-system
+Pod prefix: dpu-cplane-tenant1-doca-hbn
+Container : 
+vtysh cmd : show bgp l2vpn evpn
+
+============================================================
+Pod: dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx
+------------------------------------------------------------
+BGP table version is 1, local router ID is 11.0.0.1
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal
+Origin codes: i - IGP, e - EGP, ? - incomplete
+EVPN type-1 prefix: [1]:[EthTag]:[ESI]:[IPlen]:[VTEP-IP]:[Frag-id]
+EVPN type-2 prefix: [2]:[EthTag]:[MAClen]:[MAC]:[IPlen]:[IP]
+EVPN type-3 prefix: [3]:[EthTag]:[IPlen]:[OrigIP]
+EVPN type-4 prefix: [4]:[ESI]:[IPlen]:[OrigIP]
+EVPN type-5 prefix: [5]:[EthTag]:[IPlen]:[IP]
+
+   Network          Next Hop            Metric LocPrf Weight Path
+Route Distinguisher: 10.0.121.2:3
+*> [5]:[0]:[29]:[10.0.121.0]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                             0             0 65101 ?
+                    RT:65101:100001 ET:8 Rmac:ae:3f:c1:0f:8b:20
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                             0             0 65101 ?
+                    RT:65101:100001 ET:8 Rmac:ae:3f:c1:0f:8b:20
+Route Distinguisher: 10.0.121.10:3
+*> [5]:[0]:[29]:[10.0.121.8]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                             0         32768 ?
+                    ET:8 RT:65201:100001 Rmac:ee:9c:f3:bc:0e:73
+Route Distinguisher: 11.0.0.0:4
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]:[32]:[192.168.100.1]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]:[128]:[fe80::5e25:73ff:fee6:3845]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*> [2]:[0]:[48]:[c2:76:ee:0b:2a:ba]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*> [2]:[0]:[48]:[c2:76:ee:0b:2a:ba]:[128]:[fe80::c076:eeff:fe0b:2aba]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*> [3]:[0]:[32]:[11.0.0.0]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+*                   11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                           0 65101 i
+                    RT:65101:10 ET:8
+Route Distinguisher: 11.0.0.1:4
+*> [2]:[0]:[48]:[36:55:fe:5a:e4:84]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+*> [2]:[0]:[48]:[36:55:fe:5a:e4:84]:[128]:[fe80::3455:feff:fe5a:e484]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]:[32]:[192.168.100.9]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]:[128]:[fe80::5e25:73ff:fee7:905f]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+*> [3]:[0]:[32]:[11.0.0.1]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                       32768 i
+                    ET:8 RT:65201:10
+
+Displayed 14 out of 21 total prefixes
+
+============================================================
+Pod: dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv
+------------------------------------------------------------
+BGP table version is 1, local router ID is 11.0.0.0
+Status codes: s suppressed, d damped, h history, * valid, > best, i - internal
+Origin codes: i - IGP, e - EGP, ? - incomplete
+EVPN type-1 prefix: [1]:[EthTag]:[ESI]:[IPlen]:[VTEP-IP]:[Frag-id]
+EVPN type-2 prefix: [2]:[EthTag]:[MAClen]:[MAC]:[IPlen]:[IP]
+EVPN type-3 prefix: [3]:[EthTag]:[IPlen]:[OrigIP]
+EVPN type-4 prefix: [4]:[ESI]:[IPlen]:[OrigIP]
+EVPN type-5 prefix: [5]:[EthTag]:[IPlen]:[IP]
+
+   Network          Next Hop            Metric LocPrf Weight Path
+Route Distinguisher: 10.0.121.2:3
+*> [5]:[0]:[29]:[10.0.121.0]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                             0         32768 ?
+                    ET:8 RT:65101:100001 Rmac:ae:3f:c1:0f:8b:20
+Route Distinguisher: 10.0.121.10:3
+*> [5]:[0]:[29]:[10.0.121.8]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                             0             0 65201 ?
+                    RT:65201:100001 ET:8 Rmac:ee:9c:f3:bc:0e:73
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                             0             0 65201 ?
+                    RT:65201:100001 ET:8 Rmac:ee:9c:f3:bc:0e:73
+Route Distinguisher: 11.0.0.0:4
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]:[32]:[192.168.100.1]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+*> [2]:[0]:[48]:[5c:25:73:e6:38:45]:[128]:[fe80::5e25:73ff:fee6:3845]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+*> [2]:[0]:[48]:[c2:76:ee:0b:2a:ba]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+*> [2]:[0]:[48]:[c2:76:ee:0b:2a:ba]:[128]:[fe80::c076:eeff:fe0b:2aba]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+*> [3]:[0]:[32]:[11.0.0.0]
+                    11.0.0.0 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-lr4pv)
+                                                       32768 i
+                    ET:8 RT:65101:10
+Route Distinguisher: 11.0.0.1:4
+*> [2]:[0]:[48]:[36:55:fe:5a:e4:84]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*> [2]:[0]:[48]:[36:55:fe:5a:e4:84]:[128]:[fe80::3455:feff:fe5a:e484]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]:[32]:[192.168.100.9]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*> [2]:[0]:[48]:[5c:25:73:e7:90:5f]:[128]:[fe80::5e25:73ff:fee7:905f]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*> [3]:[0]:[32]:[11.0.0.1]
+                    11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+*                   11.0.0.1 (dpu-cplane-tenant1-doca-hbn-bksgp-ds-l9dmx)
+                                                           0 65201 i
+                    RT:65201:10 ET:8
+
+Displayed 14 out of 21 total prefixes
+```

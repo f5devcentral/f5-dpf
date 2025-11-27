@@ -22,9 +22,7 @@ spec:
               values:
                 bgp_peer_group: hbn
                 vrf1: RED
-                vrf2: BLUE
                 l3vni1: 100001
-                l3vni2: 100002
             - hostnamePattern: "dpu-node-${DPU1_SERIAL}*"
               values:
                 bgp_autonomous_system: 65101
@@ -131,24 +129,6 @@ spec:
                       enable: on
                       vni:
                         {{ config.l3vni1 }}: {}
-                    router:
-                      bgp:
-                        address-family:
-                          ipv4-unicast:
-                            enable: on
-                            redistribute:
-                              connected:
-                                enable: on
-                            route-export:
-                              to-evpn:
-                                enable: on
-                        autonomous-system: {{ config.bgp_autonomous_system }}
-                        enable: on
-                  {{ config.vrf2 }}:
-                    evpn:
-                      enable: on
-                      vni:
-                        {{ config.l3vni2 }}: {}
                     router:
                       bgp:
                         address-family:
