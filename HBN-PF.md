@@ -7,6 +7,18 @@ Each node gets 2 PF's:
 - pf0hpf_if: connected to vrf RED (evpn type 5), IP subnet per node
 - pf1hpf_if: connected to layer2 (evpn type 2), shared network across node
 
+```
++----------------------------+                +----------------------------+
+|          worker1           |                |          worker2           |
+|                            |                |                            |
+|    10.0.121.9/29 enp7s0np0 +-- EVPN/VXLAN --+ enp7s0np0 10.0.121.1/29    |
+|                            |     Type-5     |                            |
+|                            |                |                            |
+| 192.168.100.9/24 enp8s0np0 +-- EVPN/VXLAN --+ enp7s0np0 192.168.100.1/24 |
+|                            |     Type-2     |                            |
+|                            |                |                            |
++----------------------------+                +----------------------------+
+```
 
 Deploy with
 
