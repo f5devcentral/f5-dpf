@@ -16,7 +16,7 @@ cluster running on baremetal or in a VM with bridged network access based on
 
 ```
 +--------------------------+         +--------------------------+
-|                          |         |         worker2          |
+|         worker1          |         |         worker2          |
 |             +------------+         +------------+             |
 |             |            |         |            |             |
 |   enp7s0np0 +  bf-3   p0 +---------+ p0  bf-3   + enp7s0np0   |
