@@ -381,3 +381,10 @@ mybrsfc-hbn-trusted:
   "config": "{\n  \"bridge\": \"br-sfc\",\n  \"cniVersion\": \"0.3.1\",\n  \"interface_type\": \"dpdk\",\n  \"mtu\": 9000,\n  \"type\": \"ovs\"\n}"
 }
 ```
+
+## Caveats
+
+- Re-imaging DPU's requires a power cycle of the node hosting the DPU, even if HBN-PF has previously been deployed. Reboot of the DPU alone will bring up BGP unnumbered
+but fail to learn MAC addresses, blocking node to node connectivity via EVPN.
+
+- FRR config for vlan10 is technically not required but leads to annoucing just L2 addresses for Type 2. Adding vlan10 config provides L2 and L3 learning for Type 2.
