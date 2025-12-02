@@ -66,6 +66,9 @@ spec:
                       domain:
                         br_default:
                           access: 10
+                  vlan10:
+                    type: svi
+                    vlan: 10
                 nve:
                   vxlan:
                     arp-nd-suppress: on
