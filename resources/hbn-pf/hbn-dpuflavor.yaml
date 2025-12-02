@@ -2,6 +2,8 @@
 apiVersion: provisioning.dpu.nvidia.com/v1alpha1
 kind: DPUFlavor
 metadata:
+  annotations:
+    provisioning.dpu.nvidia.com/num-of-trusted-sfs: "6"
   name: hbn
   namespace: dpf-operator-system
 spec:
