@@ -315,3 +315,69 @@ Route Distinguisher: 11.0.0.1:4
 
 Displayed 14 out of 21 total prefixes
 ```
+
+## Scalable functions
+
+`PF_TOTAL_SF=20` is defined in hbn-dpuflavor.yaml, which creates 20 scalable functions, of
+which 6 trusted SF's are created via annotation `provisioning.dpu.nvidia.com/num-of-trusted-sfs: "6"` in 
+hbn-dpuflavor.yaml. Changes in DPUFlavor require re-deployment.
+
+hbn-dpuservicenad.yaml creates NAD for the trusted SF nvidia.com/bf_sf_trusted:
+
+
+```
+$ scripts/get-allocatables.sh
+
+dpu-node-mt2428xz0n1d-mt2428xz0n1d dpu-node-mt2428xz0r48-mt2428xz0r48
+dpu-node-mt2428xz0n1d-mt2428xz0n1d ...
+{
+  "cpu": "16",
+  "ephemeral-storage": "112835620268",
+  "hugepages-1Gi": "0",
+  "hugepages-2Mi": "6Gi",
+  "hugepages-32Mi": "0",
+  "hugepages-64Ki": "0",
+  "memory": "25858536Ki",
+  "nvidia.com/bf_sf": "13",
+  "nvidia.com/bf_sf_trusted": "6",
+  "ovs-cni.network.kubevirt.io/br-hbn": "1k",
+  "ovs-cni.network.kubevirt.io/br-sfc": "1k",
+  "pods": "110"
+}
+
+dpu-node-mt2428xz0r48-mt2428xz0r48 ...
+{
+  "cpu": "16",
+  "ephemeral-storage": "112835620268",
+  "hugepages-1Gi": "0",
+  "hugepages-2Mi": "6Gi",
+  "hugepages-32Mi": "0",
+  "hugepages-64Ki": "0",
+  "memory": "25858524Ki",
+  "nvidia.com/bf_sf": "13",
+  "nvidia.com/bf_sf_trusted": "6",
+  "ovs-cni.network.kubevirt.io/br-hbn": "1k",
+  "ovs-cni.network.kubevirt.io/br-sfc": "1k",
+  "pods": "110"
+}
+
+No resources found in default namespace.
+mwiget@nuc1:~/f5-dpf$ scripts/get-nad.sh
+
+iprequest:
+{
+  "config": "{\n  \"cniVersion\": \"0.4.0\",\n  \"type\": \"dummy\",\n  \"ipam\": {\n    \"type\": \"nv-ipam\"\n  }\n}"
+}
+mybrhbn:
+{
+  "config": "{\n  \"cniVersion\": \"0.4.0\",\n  \"type\": \"ovs\",\n  \"mtu\": 1500,\n  \"bridge\": \"br-hbn\",\n  \"interface_type\": \"dpdk\"\n}"
+}
+mybrsfc:
+{
+  "config": "{\n  \"cniVersion\": \"0.4.0\",\n  \"type\": \"ovs\",\n  \"bridge\": \"br-sfc\",\n  \"mtu\": 1500,\n  \"interface_type\": \"dpdk\",\n  \"ipam\": {\n    \"type\": \"nv-ipam\"\n  }\n}"
+}
+mybrsfc-hbn-trusted:
+{
+  "config": "{\n  \"bridge\": \"br-sfc\",\n  \"cniVersion\": \"0.3.1\",\n  \"interface_type\": \"dpdk\",\n  \"mtu\": 9000,\n  \"type\": \"ovs\"\n}"
+}
+```

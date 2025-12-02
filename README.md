@@ -63,10 +63,9 @@ Set `$DPUCLUSTER_VIP` to an IP in the same subnet and interface
 ## helper shell aliases
 
 The following aliases simplify accessing the kamaji cluster after it has been 
-deployed. `make kamaji` generates the kubeconfig.
+deployed.
 
 ```
-make kamaji
 alias d='kubectl --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
 alias dk9s='k9s --kubeconfig=/home/mwiget/f5-dpf/dpu-cplane-tenant1.kubeconfig'
 ```

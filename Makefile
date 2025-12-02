@@ -2,7 +2,7 @@
 
 include .env
 
-all: cluster local-storage bfb-pv create-bmc-pwd dpf-operator dpf-system
+all: cluster local-storage bfb-pv create-bmc-pwd dpf-operator dpf-system kamaji-kubeconfig
 	@echo ""
 	@echo "================================================================================"
 	@echo "✅ DPF Cluster Installation Complete!"
@@ -42,7 +42,7 @@ passthru:
 hbn-pf:
 	scripts/hbn-pf-dpf-objects.sh
 
-kamaji:
+kamaji-kubeconfig:
 	scripts/kamaji-cluster-access.sh
 
 clean-all:
