@@ -38,6 +38,7 @@ wait_condition() {
 }
 
 build() {
+  cat resources/hbn-pf/hbn-dpuserviceconfig.yaml | envsubst | kubectl apply -f-
   info "create DPUDeployment, DPUServiceConfig, DPUServiceTemplate and other necessary objects ..."
   if ! cat resources/hbn-pf/*.yaml | envsubst | kubectl apply -f-; then
     err "Applying manifests failed"; return 1
