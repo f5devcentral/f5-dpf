@@ -1,0 +1,77 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceNAD
+metadata:
+  name: mybrsfc-hbn-trusted
+  namespace: dpf-operator-system
+  annotations:
+    dpuservicenad.svc.dpu.nvidia.com/use-trusted-sfs: ""
+spec:
+  resourceType: sf
+  bridge: br-sfc
+  ipam: false
+  serviceMTU: 9000
+
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceTemplate
+metadata:
+  name: alpine-sfc
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: alpine-sfc
+  helmChart:
+    source:
+      repoURL: oci://ghcr.io/mwiget/helm
+      chart: alpine-sfc
+      version: 0.1.0
+
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceConfiguration
+metadata:
+  name: alpine-sfc
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: alpine-sfc
+  upgradePolicy:
+    applyNodeEffect: false
+  serviceConfiguration:
+    serviceDaemonSet:
+      resources:
+        hugepages-2Mi: "512Mi"
+        memory: "512Mi"
+        nvidia.com/bf_sf_trusted: 2
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |
+            [
+              {
+                "interface": "external"
+              },
+              {
+                "interface": "internal"
+              }
+            ]
+    helmChart:
+      values:
+        worker:
+          image:
+            repository: alpine
+            tag: "3.20"
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apk add --no-cache iproute2 iproute2-tc ethtool tcpdump busybox-extras bash
+              echo "alpine-sfc on DPU up"
+              ip -br link
+              # stay alive
+              while true; do sleep 3600; done
+
+
+  # Reference the interface defined above
+  interfaces:
+    - name: external
+      network: mybrsfc-hbn-trusted
+    - name: internal
+      network: mybrsfc-hbn-trusted
+

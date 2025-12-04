@@ -42,6 +42,15 @@ passthru:
 hbn-pf:
 	scripts/hbn-pf-dpf-objects.sh
 
+delete-hbn-pf:
+	scripts/hbn-pf-dpf-objects.sh delete || true
+
+hbn-pf-alpine:
+	scripts/hbn-pf-dpf-alpine.sh
+
+delete-hbn-pf-alpine:
+	scripts/hbn-pf-dpf-alpine.sh delete || true
+
 kamaji-kubeconfig:
 	scripts/kamaji-cluster-access.sh
 

@@ -29,7 +29,7 @@ build() {
         return
     else
         echo "Not ready yet. Retrying in 5 seconds..."
-        sleep ${WAIT_INTERVAL}
+        sleep ${KWAIT_INTERVAL}
     fi
 done
 

@@ -3,6 +3,7 @@ TCP=dpu-cplane-tenant1
 SECRET="${TCP}-admin-kubeconfig"
 unset KUBECONFIG
 # Extract the file (key is "admin.conf")
+sleep 1
 kubectl -n "$NS" get secret "$SECRET" -o jsonpath='{.data.admin\.conf}' \
   | base64 -d > "${TCP}.kubeconfig"
 
