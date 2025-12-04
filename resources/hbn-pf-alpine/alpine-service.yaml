@@ -43,14 +43,10 @@ spec:
         memory: "512Mi"
         nvidia.com/bf_sf_trusted: 2
       annotations:
+        # Do not specify the net-attach-def here unless testing a manually installed/custom configuration.
+        # The net-attach-def is injected into the alpine DaemonSet manifest before installation from the "interfaces" section below.
         k8s.v1.cni.cncf.io/networks: |
             [
-              {
-                "interface": "external"
-              },
-              {
-                "interface": "internal"
-              }
             ]
     helmChart:
       values:

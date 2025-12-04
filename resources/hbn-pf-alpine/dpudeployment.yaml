@@ -47,7 +47,7 @@ spec:
             interface: pf0hpf_if
         - service:
             name: doca-hbn
-            interface: external_if
+            interface: pf2dpu2_if
         - service:
             name: alpine-sfc
             interface: external
@@ -60,7 +60,7 @@ spec:
             interface: pf1hpf_if
         - service:
             name: doca-hbn
-            interface: internal_if
+            interface: pf2tmm_if
         - service:
             name: alpine-sfc
             interface: internal
