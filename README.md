@@ -628,6 +628,7 @@ Terminate screen by typing `Ctrl-a :quit`, then exit ssh
 
 ```
 [screen is terminating]
+
 root@dpu-bmc:~#
 root@dpu-bmc:~# exit
 logout
@@ -636,6 +637,106 @@ Connection to 192.168.68.97 closed.
 
 The DPU itself doesn't run dhcpclient, so it is only reachable via console.
 
+## Caveats
+
+If imaging the DPU via DPF suddenly stops working with 
+
+`FailedToSetUpMTLS     18m    failed to set up mTLS: failed to replace CA cert, unexpected response status: 500 Internal Server`
+
+check if the cert truststore of the DPU has filled up. It has 11 slots.
+The script checks the cert slots, showing all full. Use the delete script to clear all but the first one, then check again.
+This will resove the issue and imaging proceeds.
+
+```
+$ scripts/check-dpu-truststore-certs.sh worker1-dpu-bmc
+===== worker1-dpu-bmc /redfish/v1/CertificateService/CertificateLocations =====
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100  1547  100  1547    0     0   8458      0 --:--:-- --:--:-- --:--:--  8500
+{
+  "@odata.id": "/redfish/v1/CertificateService/CertificateLocations",
+  "@odata.type": "#CertificateLocations.v1_0_0.CertificateLocations",
+  "Description": "Defines a resource that an administrator can use in order to locate all certificates installed on a given service",
+  "Id": "CertificateLocations",
+  "Links": {
+    "Certificates": [
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/1"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/10"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/2"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/3"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/4"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/5"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/6"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/7"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/8"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/9"
+      },
+      {
+        "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol/HTTPS/Certificates/1"
+      }
+    ],
+    "Certificates@odata.count": 11
+  },
+  "Name": "Certificate Locations"
+}
+```
+
+```
+$ ./scripts/delete-dpu-truststore-certs.sh worker1-dpu-bmc
+Deleting truststore certificates on worker1-dpu-bmc (keeping slot 1) ===
+Deleting certificate slot 2: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/2
+  Deleted slot 2 successfully (HTTP 204)
+Deleting certificate slot 3: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/3
+  Deleted slot 3 successfully (HTTP 204)
+Deleting certificate slot 4: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/4
+  Deleted slot 4 successfully (HTTP 204)
+Deleting certificate slot 5: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/5
+  Deleted slot 5 successfully (HTTP 204)
+Deleting certificate slot 6: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/6
+  Deleted slot 6 successfully (HTTP 204)
+Deleting certificate slot 7: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/7
+  Deleted slot 7 successfully (HTTP 204)
+Deleting certificate slot 8: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/8
+  Deleted slot 8 successfully (HTTP 204)
+Deleting certificate slot 9: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/9
+  Deleted slot 9 successfully (HTTP 204)
+Deleting certificate slot 10: /redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/10
+  Deleted slot 10 successfully (HTTP 204)
+Done. Remaining slots ===
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   738  100   738    0     0   1740      0 --:--:-- --:--:-- --:--:--  1744
+[
+  {
+    "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/1"
+  },
+  {
+    "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/Truststore/Certificates/11"
+  },
+  {
+    "@odata.id": "/redfish/v1/Managers/Bluefield_BMC/NetworkProtocol/HTTPS/Certificates/1"
+  }
+]
+```
 
 ## Resources
 

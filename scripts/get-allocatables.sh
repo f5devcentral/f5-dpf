@@ -7,6 +7,8 @@ for node in $nodes; do
   echo "$node ..."
   kubectl get nodes $node -o json | jq '.status.allocatable'
   echo ""
+  kubectl describe node $node | sed -n '/Allocated resources:/,/Events:/p' | sed '$d'
+  echo ""
 done
 
 kubectl get network-attachment-definitions
