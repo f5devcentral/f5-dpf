@@ -1,0 +1,6 @@
+apiVersion: v2
+name: alpine-sfc
+description: "Debug Alpine DPUService for SFC on br-sfc"
+type: application
+version: 0.1.5
+appVersion: "3.20"

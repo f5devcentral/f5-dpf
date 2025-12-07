@@ -5,3 +5,4 @@ local-path-provisioner
 ISSUE*.md
 *.orig
 *.kubeconfig
+*.tgz

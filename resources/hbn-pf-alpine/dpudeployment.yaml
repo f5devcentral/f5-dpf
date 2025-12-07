@@ -16,12 +16,12 @@ spec:
         matchLabels:
           feature.node.kubernetes.io/dpu-enabled: "true"
   services:
-    doca-hbn:
-      serviceTemplate: doca-hbn
-      serviceConfiguration: doca-hbn
     alpine-sfc:
       serviceTemplate: alpine-sfc
       serviceConfiguration: alpine-sfc
+    doca-hbn:
+      serviceTemplate: doca-hbn
+      serviceConfiguration: doca-hbn
   serviceChains:
     switches:
       - ports:
@@ -47,7 +47,7 @@ spec:
             interface: pf0hpf_if
         - service:
             name: doca-hbn
-            interface: pf2dpu2_if
+            interface: external_if
         - service:
             name: alpine-sfc
             interface: external
@@ -60,7 +60,7 @@ spec:
             interface: pf1hpf_if
         - service:
             name: doca-hbn
-            interface: pf2tmm_if
+            interface: internal_if
         - service:
             name: alpine-sfc
             interface: internal

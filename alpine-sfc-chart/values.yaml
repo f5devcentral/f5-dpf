@@ -1,0 +1,27 @@
+worker:
+  image:
+    repository: alpine
+    tag: "3.20"
+    pullPolicy: IfNotPresent
+
+  command:
+    - /bin/sh
+    - -c
+
+  args:
+    - |
+      apk add --no-cache iproute2 iproute2-tc ethtool tcpdump busybox-extras bash
+      echo "alpine-sfc on DPU up"
+      ip -br link
+      while true; do sleep 3600; done
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 500m
+      memory: 256Mi
+
+  # DPF/DPUService will inject the Multus NAD annotation via helmChart.values.worker.annotations
+  annotations: {}

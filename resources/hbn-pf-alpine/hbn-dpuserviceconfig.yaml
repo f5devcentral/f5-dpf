@@ -152,7 +152,7 @@ spec:
     network: mybrhbn
   - name: pf1hpf_if
     network: mybrhbn
-  - name: pf2dpu2_if
+  - name: external_if
     network: mybrhbn
-  - name: pf2tmm_if
+  - name: internal_if
     network: mybrhbn
