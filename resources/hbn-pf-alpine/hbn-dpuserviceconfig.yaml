@@ -12,7 +12,8 @@ spec:
         k8s.v1.cni.cncf.io/networks: |-
           [
           {"name": "iprequest", "interface": "ip_lo", "cni-args": {"poolNames": ["loopback"], "poolType": "cidrpool"}},
-          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}}
+          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}},
+          {"name": "iprequest", "interface": "ip_external_if", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": false}}
           ]
     helmChart:
       values:
@@ -61,7 +62,17 @@ spec:
                       address:
                         {{ ipaddresses.ip_pf0hpf.cidr }}: {}
                       vrf: {{ config.vrf1 }}
+                  external_if:
+                    ip:
+                      address:
+                        {{ ipaddresses.ip_external_if.cidr }}: {}
+                      vrf: {{ config.vrf1 }}
                   pf1hpf_if:
+                    bridge:
+                      domain:
+                        br_default:
+                          access: 10
+                  internal_if:
                     bridge:
                       domain:
                         br_default:
