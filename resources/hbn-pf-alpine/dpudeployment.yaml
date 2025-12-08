@@ -45,6 +45,7 @@ spec:
         - service:
             name: doca-hbn
             interface: pf0hpf_if
+      - ports:
         - service:
             name: doca-hbn
             interface: external_if
@@ -58,6 +59,7 @@ spec:
         - service:
             name: doca-hbn
             interface: pf1hpf_if
+      - ports:
         - service:
             name: doca-hbn
             interface: internal_if
