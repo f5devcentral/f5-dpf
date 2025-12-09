@@ -3,6 +3,83 @@
 DPUServiceConfiguration alpine-sfc is attached to HBN pod via two interfaces, internal_sf and
 external_sf. 
 
+The required alpine helm chart is created from this repo's folder ../../alpine-sfc-chart/.  
+DPF adds label `svc.dpu.nvidia.com/service=dpudeployment_hbn_alpine-sfc` to the helm deployment,
+which must be passed to the pod via helm template. Trusted SF must be requested as part of
+the DPUServiceConfiguration, which also needs to be passed onto the pod via helm template.
+
+To check proper label and resource allocation, use:
+
+```
+mwiget@nuc1:~/f5-dpf/alpine-sfc-chart/templates$ d describe pod dpu-cplane-tenant1-alpine-sfc-6dffg-gsqhz | sed -n '/Limits:/,/Environment:/p'
+    Limits:
+      cpu:                       500m
+      hugepages-2Mi:             512Mi
+      memory:                    256Mi
+      nvidia.com/bf_sf_trusted:  2
+    Requests:
+      cpu:                       50m
+      hugepages-2Mi:             512Mi
+      memory:                    64Mi
+      nvidia.com/bf_sf_trusted:  2
+    Environment:                 <none>
+```
+
+```
+$ d describe pod dpu-cplane-tenant1-alpine-sfc-6dffg-gsqhz | sed -n '/Labels:/,/Status:/p'
+Labels:           app.kubernetes.io/instance=dpu-cplane-tenant1-alpine-sfc-6dffg
+                  app.kubernetes.io/name=alpine-sfc
+                  controller-revision-hash=7cf5676785
+                  pod-template-generation=1
+                  svc.dpu.nvidia.com/service=dpudeployment_hbn_alpine-sfc
+Annotations:      k8s.v1.cni.cncf.io/network-status:
+                    [{
+                        "name": "default-cni-network",
+                        "interface": "eth0",
+                        "ips": [
+                            "10.244.1.87"
+                        ],
+                        "mac": "ee:6f:72:55:d8:00",
+                        "default": true,
+                        "dns": {}
+                    },{
+                        "name": "dpf-operator-system/mybrsfc-hbn-trusted",
+                        "interface": "external",
+                        "mac": "aa:2a:72:b8:9e:6c",
+                        "dns": {}
+                    },{
+                        "name": "dpf-operator-system/mybrsfc-hbn-trusted",
+                        "interface": "internal",
+                        "mac": "22:d2:68:49:09:91",
+                        "dns": {}
+                    }]
+                  k8s.v1.cni.cncf.io/networks:
+                    [{"name":"mybrsfc-hbn-trusted","namespace":"dpf-operator-system","interface":"external","cni-args":{"mtu":1500}},{"name":"mybrsfc-hbn-trus...
+                  k8s.v1.cni.cncf.io/networks-status:
+                    [{
+                        "name": "default-cni-network",
+                        "interface": "eth0",
+                        "ips": [
+                            "10.244.1.87"
+                        ],
+                        "mac": "ee:6f:72:55:d8:00",
+                        "default": true,
+                        "dns": {}
+                    },{
+                        "name": "dpf-operator-system/mybrsfc-hbn-trusted",
+                        "interface": "external",
+                        "mac": "aa:2a:72:b8:9e:6c",
+                        "dns": {}
+                    },{
+                        "name": "dpf-operator-system/mybrsfc-hbn-trusted",
+                        "interface": "internal",
+                        "mac": "22:d2:68:49:09:91",
+                        "dns": {}
+                    }]
+Status:           Running
+```
+
+
 To test connectivity via internal network (connected to vlan10 evpn/vxlan type 2), assign IP address
 to the alpine-sfc pod in subnet 192.168.100.0/24 network and check reachability to worker1 and worker2:
 
