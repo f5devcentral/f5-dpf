@@ -46,19 +46,20 @@ spec:
             name: doca-hbn
             interface: pf0hpf_if
       - ports:
-        - service:
-            name: doca-hbn
-            interface: external_if
-        - service:
-            name: alpine-sfc
-            interface: external
-      - ports:
         - serviceInterface:
             matchLabels:
               interface: pf1hpf
         - service:
             name: doca-hbn
             interface: pf1hpf_if
+      # alpine-sfc service pod
+      - ports:
+        - service:
+            name: doca-hbn
+            interface: external_if
+        - service:
+            name: alpine-sfc
+            interface: external
       - ports:
         - service:
             name: doca-hbn

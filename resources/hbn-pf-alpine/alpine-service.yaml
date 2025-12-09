@@ -54,7 +54,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              apk add --no-cache iproute2 iproute2-tc ethtool tcpdump busybox-extras bash pciutils
+              apk add --no-cache iproute2 iproute2-tc ethtool tcpdump busybox-extras bash pciutils iproute2
               echo "alpine-sfc on DPU up"
               ip -br link
               # stay alive
