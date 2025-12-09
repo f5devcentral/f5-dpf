@@ -26,10 +26,18 @@ spec:
       chart: alpine-sfc
       version: 0.1.5
     values:
-      resources:
-        hugepages-2Mi: "512Mi"
-        memory: "512Mi"
-#        nvidia.com/bf_sf: 2
+      worker:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 64Mi
+            nvidia.com/bf_sf_trusted: 2
+            hugepages-2Mi: "512Mi"
+          limits:
+            cpu: 500m
+            memory: 256Mi
+            nvidia.com/bf_sf_trusted: 2
+            hugepages-2Mi: "512Mi"
 
 ---
 apiVersion: svc.dpu.nvidia.com/v1alpha1
@@ -54,6 +62,7 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
+              apk update
               apk add --no-cache iproute2 iproute2-tc ethtool tcpdump busybox-extras bash pciutils iproute2
               echo "alpine-sfc on DPU up"
               ip -br link

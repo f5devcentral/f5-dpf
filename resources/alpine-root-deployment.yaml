@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alpine-root
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: alpine-root
+  template:
+    metadata:
+      labels:
+        app: alpine-root
+    spec:
+      containers:
+      - image: public.ecr.aws/docker/library/alpine:latest
+        imagePullPolicy: Always
+        command: ["/bin/ash"]
+        args: [ "-c", "apk add ipmitool curl iperf3; sleep infinity"]
+        name: alpine
+        volumeMounts:
+          - name: hostroot
+            mountPath: /host
+        securityContext:
+          privileged: true
+          runAsUser: 0
+      volumes:
+        - name: hostroot
+          hostPath:
+            path: /
