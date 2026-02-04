@@ -12,7 +12,7 @@ external_sf.
 |        merged eSwitch         |   |        merged eSwitch         |
 |                               |   |                               |
 |    +--------------------+     |   |    +--------------------+     |
-|    |        TMM         |     |   |    |        TMM         |     |
+|    |       alpine       |     |   |    |       alpine       |     |
 |    +--+--------------+--+     |   |    +--+--------------+--+     |
 |       |              |        |   |       |              |        |
 |   external       internal     |   |   external       internal     |
