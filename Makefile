@@ -54,5 +54,9 @@ delete-hbn-pf-alpine:
 kamaji-kubeconfig:
 	scripts/kamaji-cluster-access.sh
 
+bnk:
+	scripts/decode-jwt.sh
+	scripts/install-bnk.sh
+
 clean-all:
 	scripts/k0s-cluster.sh delete

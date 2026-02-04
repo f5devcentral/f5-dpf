@@ -3,6 +3,38 @@
 DPUServiceConfiguration alpine-sfc is attached to HBN pod via two interfaces, internal_sf and
 external_sf. 
 
+
+```
+     leaf1            leaf2              leaf1            leaf2
+       |                |                  |                |
++------+----------------+-------+   +------+----------------+-------+
+|      p0   DPU1 HBN    p1      |   |      p0   DPU2 HBN    p1      |
+|        merged eSwitch         |   |        merged eSwitch         |
+|                               |   |                               |
+|    +--------------------+     |   |    +--------------------+     |
+|    |        TMM         |     |   |    |        TMM         |     |
+|    +--+--------------+--+     |   |    +--+--------------+--+     |
+|       |              |        |   |       |              |        |
+|   external       internal     |   |   external       internal     |
+|   external_if    internal_if  |   |   external_if    internal_if  |
+|       |              |        |   |       |              |        |
+| +-----+------+ +-----+------+ |   | +-----+------+ +-----+------+ |
+| |  vrf1 RED  | | br_default | |   | |  vrf1 RED  | | br_default | |
+| |  EVPN T5   | | EVPN T2    | |   | |  EVPN T5   | | EVPN T2    | |
+| | vni 100001 | |  vni 10    | |   | | vni 100001 | |  vni 10    | |
+| |            | |  avlan 10  | |   | |            | |  avlan 10  | |
+| +-----+------+ +-----+------+ |   | +-----+------+ +-----+------+ |
+|       |              |        |   |       |              |        |
+|     pf0hpf         pf1hpf     |   |     pf0hpf         pf1hpf     |
++-------|--------------|--------+   +-------|--------------|--------+
+        |              |                    |              |         
++-------+--------------+--------+   +-------+--------------+--------+
+|   enp7s0np0      enp8s0np0    |   |   enp7s0np0      enp8s0np0    |
+| 10.0.121.9/29 192.168.100.9/24|   | 10.0.121.1/29 192.168.100.1/24|
+|            worker1            |   |            worker2            |
++-------------------------------+   +-------------------------------+
+
+```
 The required alpine helm chart is created from this repo's folder ../../alpine-sfc-chart/.  
 DPF adds label `svc.dpu.nvidia.com/service=dpudeployment_hbn_alpine-sfc` to the helm deployment,
 which must be passed to the pod via helm template. Trusted SF must be requested as part of

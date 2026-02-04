@@ -6,3 +6,5 @@ ISSUE*.md
 *.orig
 *.kubeconfig
 *.tgz
+f5-bigip-*
+far-secret.yaml
