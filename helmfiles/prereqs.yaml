@@ -1,3 +1,11 @@
+environments:
+  default: {}
+  # Environment for shared file system configuration.
+  # Used by local-path-provisioner to configure shared storage instead of local node storage.
+  shared-fs:
+    values:
+      - envs/shared-fs.yaml
+---
 repositories:
   - name: argoproj
     url: https://argoproj.github.io/argo-helm
@@ -7,12 +15,15 @@ repositories:
     url: https://clastix.github.io/charts
   - name: jetstack
     url: https://charts.jetstack.io
+  - name: local-storage
+    url: git+https://github.com/rancher/local-path-provisioner@deploy/chart?ref=v0.0.31
 
 helmDefaults:
-  atomic: true
-  cleanupOnFail: true
+  #atomic: true
+  #cleanupOnFail: true
   skipDeps: false
   wait: false
+  timeout: 600
 
 releases:
   - name: cert-manager
@@ -38,27 +49,17 @@ releases:
     namespace: dpf-operator-system
     createNamespace: true
     chart: oci://ghcr.io/nvidia/charts/kamaji
-    version: 1.1.0
+    version: 1.2.0
     labels:
       app: kamaji
-    wait: true
     values:
       - values/kamaji.yaml
-      - inline:
-          nodeSelector:
-            node-role.kubernetes.io/control-plane: ""
-          tolerations:
-            - key: "node-role.kubernetes.io/control-plane"
-              operator: "Exists"
-              effect: "NoSchedule"
-          affinity: {}   # neutralize any legacy master affinity
     needs:
       - cert-manager/cert-manager
-      - dpf-operator-system/argo-cd 
     hooks:
       - events: [ "preapply" ]
         command: "./apply-crds.sh"
-        args: ["oci://ghcr.io/nvidia/charts/kamaji", "1.1.0"]
+        args: ["oci://ghcr.io/nvidia/charts/kamaji", "1.2.0"]
         showlogs: true
 
   - name: maintenance-operator
@@ -83,10 +84,20 @@ releases:
     createNamespace: true
     chart: argoproj/argo-cd
     version: 7.8.2
+    timeout: 600
     labels:
       app: argo-cd
     values:
       - values/argo-cd.yaml
+    hooks:
+      - events: [ "postsync" ]
+        command: "kubectl"
+        args: ["wait", "--for=condition=ready", "--timeout=300s", "pod", "-l", "app.kubernetes.io/name=argocd-server", "-n", "dpf-operator-system"]
+        showlogs: true
+      - events: [ "postsync" ]
+        command: "kubectl"
+        args: ["wait", "--for=condition=ready", "--timeout=300s", "pod", "-l", "app.kubernetes.io/name=argocd-application-controller", "-n", "dpf-operator-system"]
+        showlogs: true
 
   - name: node-feature-discovery
     namespace: dpf-operator-system
@@ -102,3 +113,13 @@ releases:
         command: "./apply-crds.sh"
         args: ["node-feature-discovery/node-feature-discovery", "0.17.1"]
         showlogs: true
+
+  - name: local-path-provisioner
+    namespace: local-path-provisioner
+    createNamespace: true
+    chart: local-storage/local-path-provisioner
+    labels:
+      app: local-path-provisioner
+    values:
+      - values/local-path-provisioner.yaml
+      - values/local-path-provisioner.yaml.gotmpl

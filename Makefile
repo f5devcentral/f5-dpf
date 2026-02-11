@@ -10,10 +10,13 @@ all: cluster local-storage bfb-pv create-bmc-pwd dpf-operator dpf-system kamaji-
 	@echo ""
 	@echo "Next steps to add worker nodes with DPUs:"
 	@echo "1. (optional) expose argocd server UI with 'make argocd'"
-	@echo "2. deploy DPF object/use cases with 'make passthru' or 'make hbn-pf'"
+	@echo "2. deploy DPF object/use cases with 'make passthru', 'make hbn-pf' or 'make hbn-pf-alpine'"
 	@echo "3. verify status with scripts/check-dpusets.sh"
 	@echo ""
 	@echo "================================================================================"
+
+requirements:
+	scripts/install-requirements.sh
 
 cluster:
 	scripts/k0s-cluster.sh

@@ -2,9 +2,9 @@
 apiVersion: provisioning.dpu.nvidia.com/v1alpha1
 kind: DPUFlavor
 metadata:
+  name: hbn-$DPF_VERSION
   annotations:
     provisioning.dpu.nvidia.com/num-of-trusted-sfs: "6"
-  name: hbn
   namespace: dpf-operator-system
 spec:
   dpuMode: zero-trust
@@ -57,6 +57,8 @@ spec:
     - SRIOV_EN=1
     - NUM_OF_VFS=46
     - LAG_RESOURCE_ALLOCATION=1
+    - LINK_TYPE_P1=ETH
+    - LINK_TYPE_P2=ETH
   ovs:
     rawConfigScript: |
       _ovs-vsctl() {
@@ -78,3 +80,6 @@ spec:
       _ovs-vsctl set Interface p0 type=dpdk
       _ovs-vsctl set Interface p0 mtu_request=9216
       _ovs-vsctl set Port p0 external_ids:dpf-type=physical
+      _ovs-vsctl --may-exist add-br br-hbn
+      _ovs-vsctl set bridge br-hbn datapath_type=netdev
+      _ovs-vsctl set bridge br-hbn fail_mode=secure

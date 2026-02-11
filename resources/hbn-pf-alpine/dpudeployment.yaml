@@ -6,8 +6,8 @@ metadata:
   namespace: dpf-operator-system
 spec:
   dpus:
-    bfb: bf-bundle
-    flavor: hbn
+    bfb: bf-bundle-$DPF_VERSION
+    flavor: hbn-$DPF_VERSION
     nodeEffect:
       noEffect: true
     dpuSets:

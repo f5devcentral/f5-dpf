@@ -11,7 +11,7 @@ build() {
   info "installing local-path-provider storage class ..."
   curl https://codeload.github.com/rancher/local-path-provisioner/tar.gz/v0.0.31 \
     | tar -xz --strip=3 local-path-provisioner-0.0.31/deploy/chart/local-path-provisioner/
-  kubectl create ns local-path-provisioner || true
+  kubectl get ns local-path-provisioner || kubectl create ns local-path-provisioner
 
   helm upgrade --install -n local-path-provisioner local-path-provisioner ./local-path-provisioner --version 0.0.31 \
         --set 'tolerations[0].key=node-role.kubernetes.io/control-plane' \

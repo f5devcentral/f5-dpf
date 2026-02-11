@@ -31,14 +31,17 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 chmod +x kubectl
 curl -sL https://get.helm.sh/helm-v3.17.3-linux-amd64.tar.gz | tar -xz --strip-components=1 linux-amd64/helm
 sudo mv kubectl helm /usr/local/bin/
+echo "removing ~/.local/share/helm cache ..."
+rm -rf ~/.local/share/helm
 
 echo ""
 echo "installing Helmfile ..."
 # Get latest release number
-LATEST=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f4)
+#VERSION=$(curl -s https://api.github.com/repos/helmfile/helmfile/releases/latest | grep tag_name | cut -d '"' -f4)
+VERSION=1.1.2
 
 # Download and install
-curl -L "https://github.com/helmfile/helmfile/releases/download/${LATEST}/helmfile_${LATEST#v}_linux_amd64.tar.gz" -o helmfile.tar.gz
+curl -L "https://github.com/helmfile/helmfile/releases/download/v${VERSION}/helmfile_${VERSION#v}_linux_amd64.tar.gz" -o helmfile.tar.gz
 tar -xzf helmfile.tar.gz helmfile
 sudo mv helmfile /usr/local/bin/
 rm helmfile.tar.gz

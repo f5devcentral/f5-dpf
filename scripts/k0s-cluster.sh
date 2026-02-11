@@ -18,6 +18,8 @@ build() {
     info "==> k0s already present at $(command -v k0s) (version: $(k0s version))"
   else
     info "==> Installing k0s..."
+#    export K0S_VERSION="v1.33.4+k0s.0"
+#    curl -sSf https://get.k0s.sh | sudo --preserve-env=K0S_VERSION sh
     curl -sSf https://get.k0s.sh | sudo sh
 
     # Create a default config

@@ -9,6 +9,7 @@ helmDefaults:
   cleanupOnFail: true
   skipDeps: false
   wait: false
+  timeout: 600
 
 releases:
   - name: kube-state-metrics
@@ -16,6 +17,8 @@ releases:
     createNamespace: true
     chart: prometheus-community/kube-state-metrics
     version: 5.25.1
+    labels:
+      app: kube-state-metrics
     values:
       - values/kube-state-metrics.yaml
 
@@ -24,6 +27,8 @@ releases:
     createNamespace: true
     chart: grafana/grafana
     version: 8.4.6
+    labels:
+      app: grafana
     values:
       - values/grafana.yaml
 
@@ -32,5 +37,7 @@ releases:
     createNamespace: true
     chart: prometheus-community/prometheus
     version: 25.26.0
+    labels:
+      app: prometheus
     values:
       - values/prometheus.yaml
