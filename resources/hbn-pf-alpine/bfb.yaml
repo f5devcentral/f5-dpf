@@ -2,7 +2,7 @@
 apiVersion: provisioning.dpu.nvidia.com/v1alpha1
 kind: BFB
 metadata:
-  name: bf-bundle
+  name: bf-bundle-$DPF_VERSION
   namespace: dpf-operator-system
 spec:
   url: $BFB_URL

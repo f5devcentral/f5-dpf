@@ -8,3 +8,4 @@ ISSUE*.md
 *.tgz
 f5-bigip-*
 far-secret.yaml
+*.un~
