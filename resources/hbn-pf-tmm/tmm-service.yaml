@@ -1,0 +1,153 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceNAD
+metadata:
+  name: mybrsfc-hbn-trusted
+  namespace: dpf-operator-system
+  annotations:
+    dpuservicenad.svc.dpu.nvidia.com/use-trusted-sfs: ""
+spec:
+  resourceType: sf
+  bridge: br-sfc
+  ipam: false
+  serviceMTU: 9000
+  chainedCNIs:
+    - type: rdma
+
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceTemplate
+metadata:
+  name: tmm-sfc
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: tmm-sfc
+  helmChart:
+    source:
+      repoURL: oci://repo.f5.com
+      chart: charts/f5-tmm
+      version: 15.82.0-0.2.50
+    values:
+      dpf:
+        enabled: true
+      wholeClusterMode:
+        enabled: true
+      global:
+        imageCredentials:
+          name: far-secret
+        dnsx:
+          enabled: false
+        afm:
+          enabled: false
+          pccd:
+            enabled: false
+        dwbld:
+          enabled: false
+        gslb:
+          enabled: false
+        bdosd:
+          enabled: false
+        urlcat:
+          enabled: false
+        f5-toda-logging:
+          enabled: false
+      enabled: true
+
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceConfiguration
+metadata:
+  name: tmm-sfc
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: tmm-sfc
+  interfaces:
+    - name: external
+      network: mybrsfc-hbn-trusted
+    - name: internal
+      network: mybrsfc-hbn-trusted
+  serviceConfiguration:
+    serviceDaemonSet:
+      resources:
+        hugepages-2Mi: "4Gi"
+        memory: "1Gi"
+        cpu: "2"
+        nvidia.com/bf_sf_trusted: 2
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |
+          []
+#            {"name": "iprequest", "interface": "ip_external", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}}
+    configPorts:
+      serviceType: NodePort
+      ports:
+        - name: grpc-0
+          port: 8750
+          protocol: TCP
+        - name: configview
+          port: 8850
+          protocol: TCP
+    helmChart:
+      values:
+        tmm:
+          image:
+            repository: repo.f5.com/images
+            name: tmm-img
+          imagePullPolicy: IfNotPresent
+          customEnvVars:
+            - name: TMM_MAPRES_HUGEPAGES
+              value: 1536
+            - name: PAL_CPU_SET
+              value: "9,10"
+            - name: TMM_DPF_ENV
+              value: "true"
+            - name: TMM_MAPRES_VERBOSITY
+              value: debug
+          dynamicRouting:
+            enabled: true
+            exportZebosLogs: false
+            exportTmroutedLogs: false
+            tmmRouting:
+              image:
+                repository: repo.f5.com/images
+              imagePullPolicy: IfNotPresent
+              config:
+                bgp:
+                  asn: 65533
+                  hostname: spk-bgp
+                  neighbors:
+                  - ip: 172.27.1.1
+                    asn: 200
+                    ebgpMultihop: 1
+                    maxPathsEbgp: 4
+                    maxPathsIbgp: 'null'
+                    acceptsIPv4: true
+                    softReconf: true
+            tmrouted:
+              image:
+                repository: repo.f5.com/images
+              imagePullPolicy: IfNotPresent
+          service:
+            name: f5-tmm
+            type: ClusterIP
+          qkview:
+            enabled: false
+          f5_csm_qkview:
+            enabled: false
+          readinessGates:
+            enabled: false
+        blobd:
+          enabled: false
+        debug:
+          enabled: true
+          image:
+            repository: repo.f5.com/images
+          imagePullPolicy: IfNotPresent
+          f5_csm_qkview:
+            enabled: false
+        prometheus:
+          create: false
+        f5_csm_qkview:
+          enabled: false
+        tmrouted:
+          f5_csm_qkview:
+            enabled: false

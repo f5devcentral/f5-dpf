@@ -59,7 +59,12 @@ kamaji-kubeconfig:
 
 bnk:
 	scripts/decode-jwt.sh
-	scripts/install-bnk.sh
+	scripts/f5-flo.sh
+	scripts/hbn-pf-tmm.sh
+
+delete-bnk:
+	scripts/hbn-pf-tmm.sh delete
+	scripts/f5-flo.sh delete
 
 clean-all:
 	scripts/k0s-cluster.sh delete

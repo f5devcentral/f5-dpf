@@ -1,0 +1,464 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: f5-lifecycle-operator-management
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - configmaps
+  - endpoints
+  - services
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - deployments
+  - persistentvolumeclaims
+  - pods
+  - resourcequotas
+  - secrets
+  - serviceaccounts
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - deployments/scale
+  - pods/log
+  - services/finalizers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - events
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - ""
+  resources:
+  - namespaces
+  - pods/exec
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - nodes
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pods/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - ""
+  - crd.projectcalico.org
+  resources:
+  - configmaps
+  - ippools
+  - namespaces
+  - nodes
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - admissionregistration.k8s.io
+  resources:
+  - validatingwebhookconfigurations
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apiextensions.k8s.io
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - create
+  - get
+  - list
+  - patch
+  - update
+- apiGroups:
+  - apiextensions.k8s.io
+  resourceNames:
+  - f5-big-ips-policies.k8s.f5net.com
+  - f5-big-pe-policies.k8s.f5net.com
+  resources:
+  - customresourcedefinitions
+  verbs:
+  - get
+  - update
+- apiGroups:
+  - apps
+  resources:
+  - daemonsets
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - apps
+  resources:
+  - deployments
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - apps
+  - extensions
+  resources:
+  - daemonsets
+  - deployments
+  - deployments/scale
+  - ingresses
+  - replicasets
+  - statefulsets
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - certificates
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cert-manager.io
+  resources:
+  - clusterissuers
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - discovery.k8s.io
+  resources:
+  - endpointslices
+  verbs:
+  - create
+  - delete
+  - deletecollection
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dns.k8s.f5net.com
+  - dos.k8s.f5net.com
+  - fic.f5.com
+  - gateway.k8s.f5net.com
+  - gateway.networking.k8s.io
+  - ingresstcp.k8s.f5net.com
+  - ingressudp.k8s.f5net.com
+  - k8s.f5net.com
+  resources:
+  - '*'
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - dns.k8s.f5net.com
+  - dos.k8s.f5net.com
+  - gateway.k8s.f5net.com
+  - gateway.networking.k8s.io
+  - ingresstcp.k8s.f5net.com
+  - ingressudp.k8s.f5net.com
+  - k8s.f5net.com
+  resources:
+  - '*'
+  verbs:
+  - get
+  - list
+- apiGroups:
+  - fic.f5.com
+  resources:
+  - ipamranges
+  - ipamranges/status
+  - ipams
+  - ipams/status
+  verbs:
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - gateway.networking.k8s.io
+  resources:
+  - l4routes
+  verbs:
+  - get
+  - list
+  - update
+  - watch
+- apiGroups:
+  - k8s.cni.cncf.io
+  resources:
+  - network-attachment-definitions
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - k8s.f5.com
+  resources:
+  - afms
+  - analyzers
+  - cnecontrollers
+  - cneinstances
+  - cnemanifests
+  - coremonds
+  - crdconversions
+  - crdinstallers
+  - csrcs
+  - cwcs
+  - downloaders
+  - dssms
+  - dwblds
+  - envdiscoveries
+  - f5tmms
+  - fluentds
+  - ipamcontrollers
+  - ipsds
+  - nodelabelers
+  - observers
+  - otelcollectors
+  - rabbitmqs
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - k8s.f5.com
+  resources:
+  - afms/finalizers
+  - analyzers/finalizers
+  - cnecontrollers/finalizers
+  - cneinstances/finalizers
+  - cnemanifests/finalizers
+  - coremonds/finalizers
+  - crdconversions/finalizers
+  - crdinstallers/finalizers
+  - csrcs/finalizers
+  - cwcs/finalizers
+  - downloaders/finalizers
+  - dssms/finalizers
+  - dwblds/finalizers
+  - envdiscoveries/finalizers
+  - f5tmms/finalizers
+  - fluentds/finalizers
+  - ipamcontrollers/finalizers
+  - ipsds/finalizers
+  - nodelabelers/finalizers
+  - observers/finalizers
+  - otelcollectors/finalizers
+  - rabbitmqs/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - k8s.f5.com
+  resources:
+  - afms/status
+  - analyzers/status
+  - cnecontrollers/status
+  - cnemanifests/status
+  - coremonds/status
+  - crdconversions/status
+  - crdinstallers/status
+  - csrcs/status
+  - cwcs/status
+  - downloaders/status
+  - dssms/status
+  - dwblds/status
+  - f5tmms/status
+  - fluentds/status
+  - ipamcontrollers/status
+  - ipsds/status
+  - nodelabelers/status
+  - observers/status
+  - otelcollectors/status
+  - rabbitmqs/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - k8s.f5.com
+  resources:
+  - cneinstances/status
+  - envdiscoveries/status
+  verbs:
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - k8s.f5.com
+  resources:
+  - ipamoperators
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - watch
+- apiGroups:
+  - k8s.f5net.com
+  resources:
+  - f5-big-ipi-categorylists
+  verbs:
+  - create
+  - get
+  - list
+  - watch
+- apiGroups:
+  - k8s.ovn.org
+  resources:
+  - adminpolicybasedexternalroutes
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - metrics.k8s.io
+  resources:
+  - nodes
+  - pods
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - provisioning.dpu.nvidia.com
+  resources:
+  - dpuclusters
+  - dpus
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - rbac.authorization.k8s.io
+  resources:
+  - clusterrolebindings
+  - clusterroles
+  - rolebindings
+  - roles
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - svc.dpu.nvidia.com
+  resources:
+  - dpuservicecredentialrequests
+  - dpuservices
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: f5-lifecycle-operator-management
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: f5-lifecycle-operator-management
+subjects:
+- kind: ServiceAccount
+  name: f5-lifecycle-operator-management
+  namespace: dpf-operator-system

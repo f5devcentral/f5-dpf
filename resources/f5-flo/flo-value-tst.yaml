@@ -4,15 +4,19 @@ global:
   certmgr:
     clusterIssuer: bnk-ca-cluster-issuer
  
+rbac:
+  create: true 
+containerPlatform: Generic
+ServiceIPFamily: ipv4
+sharedComponentNamespace: "" 
+
 image:
-  repository: devrepo.f5.com/images
+  repository: repo.f5.com/images
   name: f5-lifecycle-operator
   pullPolicy: Always
 
-namespace: "f5-operators"
-
 fluentbit_sidecar:
-  enabled: false
+  enabled: true
   image:
     name: f5-fluentbit
  

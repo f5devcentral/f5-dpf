@@ -337,40 +337,49 @@ DPFOperatorConfig/dpfoperatorconfig  dpf-operator-system
 Both DPU's are ready. Minutes later, all reported status is now ok.
 
 ```
-$ kubectl -n dpf-operator-system exec deploy/dpf-operator-controller-manager -- /dpfctl describe dpusets
-
-NAME                                 NAMESPACE            STATUS       REASON    SINCE  MESSAGE
-DPFOperatorConfig/dpfoperatorconfig  dpf-operator-system  Ready: True  Success   10m
-├─DPUServiceChains
-│ └─DPUServiceChain/passthrough      dpf-operator-system  Ready: True  Success   12m
-├─DPUServiceInterfaces
-│ └─4 DPUServiceInterfaces...        dpf-operator-system  Ready: True  Success   12m    See p0, p1, pf0hpf, pf1hpf
-└─DPUSets
-  └─DPUSet/passthrough               dpf-operator-system
-    ├─BFB/bf-bundle                  dpf-operator-system  Ready: True  Ready     34m    File: bf-bundle-3.1.0-76_25.07_ubuntu-22.04_prod.bfb, DOCA: 3.1.0
-    └─DPUs
-      └─2 DPUs...                    dpf-operator-system  Ready: True  DPUReady  11m    See dpu-node-mt2428xz0n1d-mt2428xz0n1d, dpu-node-mt2428xz0r48-mt2428xz0r48
+$ ./scripts/check-dpusets.sh 
+NAME                                 NAMESPACE            STATUS       REASON    SINCE  MESSAGE                                                                                           
+DPFOperatorConfig/dpfoperatorconfig  dpf-operator-system  Ready: True  Success   7m4s                                                                                                      
+├─DPUServiceChains                                                                                                                                                                         
+│ └─DPUServiceChain/hbn-wkcgj        dpf-operator-system  Ready: True  Success   7m3s                                                                                                      
+├─DPUServiceIPAMs                                                                                                                                                                          
+│ └─3 DPUServiceIPAMs...             dpf-operator-system  Ready: True  Success   7m16s  See loopback, pool1, pool2                                                                         
+├─DPUServiceInterfaces                                                                                                                                                                     
+│ └─12 DPUServiceInterfaces...       dpf-operator-system  Ready: True  Success   8m18s  See alpine-sfc-external-8zxnp, alpine-sfc-internal-8vlp4, doca-hbn-external-if-cn6p4,              
+│                                                                                       doca-hbn-internal-if-vtdtq, doca-hbn-p0-if-qjgkg, doca-hbn-p1-if-99v95, doca-hbn-pf0hpf-if-8fr5v,  
+│                                                                                       doca-hbn-pf1hpf-if-72dsj, p0, p1, pf0hpf, pf1hpf                                                   
+├─DPUServiceNADs                                                                                                                                                                           
+│ └─2 DPUServiceNADs...              dpf-operator-system  Ready: True  Success   3h32m  See mybrsfc, mybrsfc-hbn-trusted                                                                   
+└─DPUSets                                                                                                                                                                                  
+  └─DPUSet/hbn-dpuset1               dpf-operator-system  Ready: True  Success   14m                                                                                                       
+    ├─BFB/bf-bundle-v25.10.1         dpf-operator-system  Ready: True  Ready     3h32m  File: bf-bundle-3.2.1-34_25.11_ubuntu-24.04_64k_prod.bfb, DOCA: 3.2.1                              
+    ├─DPUNodes                                                                                                                                                                             
+    │ └─2 DPUNodes...                dpf-operator-system  Ready: True  Ready     20m    See dpu-node-mt2428xz0n1d, dpu-node-mt2428xz0r48                                                   
+    └─DPUs                                                                                                                                                                                 
+      └─2 DPUs...                    dpf-operator-system  Ready: True  DPUReady  15m    See dpu-node-mt2428xz0n1d-mt2428xz0n1d, dpu-node-mt2428xz0r48-mt2428xz0r48
 ```
 
 
 ```
-$ kubectl get dpu -n dpf-operator-system dpu-node-mt2428xz0n1d-mt2428xz0n1d -o yaml
+$ kubectl get dpu -n dpf-operator-system dpu-node-mt2428xz0n1d-mt2428xz0n1d -o yaml 
 
 apiVersion: provisioning.dpu.nvidia.com/v1alpha1
 kind: DPU
 metadata:
-  creationTimestamp: "2025-09-29T09:39:51Z"
+  creationTimestamp: "2026-02-11T16:58:01Z"
   finalizers:
   - provisioning.dpu.nvidia.com/dpu-protection
   generation: 3
   labels:
     provisioning.dpu.nvidia.com/dpudevice-bmc-ip: 192.168.68.100
     provisioning.dpu.nvidia.com/dpudevice-name: mt2428xz0n1d
-    provisioning.dpu.nvidia.com/dpudevice-num-of-pfs: "1"
     provisioning.dpu.nvidia.com/dpudevice-opn: 900-9D3B6-00CV-AA0
+    provisioning.dpu.nvidia.com/dpudevice-psid: MT2428XZ0N1D
     provisioning.dpu.nvidia.com/dpunode-name: dpu-node-mt2428xz0n1d
-    provisioning.dpu.nvidia.com/dpuset-name: passthrough
+    provisioning.dpu.nvidia.com/dpuset-dpu-template-spec-hash: 714944b268
+    provisioning.dpu.nvidia.com/dpuset-name: hbn-dpuset1
     provisioning.dpu.nvidia.com/dpuset-namespace: dpf-operator-system
+    svc.dpu.nvidia.com/owned-by-dpudeployment: dpf-operator-system_hbn
   name: dpu-node-mt2428xz0n1d-mt2428xz0n1d
   namespace: dpf-operator-system
   ownerReferences:
@@ -378,24 +387,33 @@ metadata:
     blockOwnerDeletion: true
     controller: true
     kind: DPUSet
-    name: passthrough
-    uid: 9be335ec-1048-4d3d-9dcd-32af857b1b7e
-  resourceVersion: "7991"
-  uid: 0a1a990c-3a89-4d62-9279-94a6e6b49dd6
+    name: hbn-dpuset1
+    uid: ffb9c87b-c6f5-4fdb-8306-791987eb50fa
+  resourceVersion: "54076"
+  uid: fa7989ce-bb94-4006-88ae-47f331bf9520
 spec:
-  bfb: bf-bundle
-  bmcIP: 192.168.68.100
+  bfb: bf-bundle-v25.10.1
   cluster:
     name: dpu-cplane-tenant1
     namespace: dpu-cplane-tenant1
     nodeLabels:
-      operator.dpu.nvidia.com/dpf-version: v25.7.0
+      operator.dpu.nvidia.com/dpf-version: v25.10.1
       provisioning.dpu.nvidia.com/host: dpu-node-mt2428xz0n1d
+      svc.dpu.nvidia.com/dpuservice-alpine-sfc-version: alpine-sfc-l4tqn
+      svc.dpu.nvidia.com/dpuservice-doca-hbn-version: doca-hbn-vhtdk
+      svc.dpu.nvidia.com/dpuservicechain-version: hbn-wkcgj
+      svc.dpu.nvidia.com/owned-by-dpudeployment: dpf-operator-system_hbn
   dpuDeviceName: mt2428xz0n1d
-  dpuFlavor: passthrough
+  dpuFlavor: hbn-v25.10.1
   dpuNodeName: dpu-node-mt2428xz0n1d
   nodeEffect:
+    applyOnLabelChange: false
+    force: false
     noEffect: true
+    nodeMaintenanceAdditionalRequestors:
+    - dpf-operator-system_hbn_alpine-sfc-l4tqn
+    - dpf-operator-system_hbn_doca-hbn-vhtdk
+    - dpf-operator-system_hbn_hbn-wkcgj
   serialNumber: MT2428XZ0N1D
 status:
   addresses:
@@ -403,62 +421,85 @@ status:
     type: InternalIP
   - address: dpu-node-mt2428xz0n1d-mt2428xz0n1d
     type: Hostname
-  bfCFGFile: bfcfg/dpf-operator-system_dpu-node-mt2428xz0n1d-mt2428xz0n1d_0a1a990c-3a89-4d62-9279-94a6e6b49dd6
-  bfbFile: /bfb/dpf-operator-system-bf-bundle.bfb
+  bfCFGFile: /bfb/bfcfg/dpf-operator-system_dpu-node-mt2428xz0n1d-mt2428xz0n1d_fa7989ce-bb94-4006-88ae-47f331bf9520
+  bfbFile: /bfb/dpf-operator-system-bf-bundle-v25.10.1.bfb
   conditions:
-  - lastTransitionTime: "2025-09-29T09:39:53Z"
+  - lastTransitionTime: "2026-02-11T17:52:27Z"
     message: ""
-    reason: Initialized
+    observedGeneration: 3
+    reason: DPUReady
     status: "True"
-    type: Initialized
-  - lastTransitionTime: "2025-09-29T09:39:53Z"
+    type: Ready
+  - lastTransitionTime: "2026-02-11T16:58:05Z"
     message: ""
-    reason: BFBReady
-    status: "True"
-    type: BFBReady
-  - lastTransitionTime: "2025-09-29T09:39:53Z"
-    message: ""
-    reason: NodeEffectReady
-    status: "True"
-    type: NodeEffectReady
-  - lastTransitionTime: "2025-09-29T09:39:55Z"
-    message: ""
-    reason: InterfaceInitialized
-    status: "True"
-    type: InterfaceInitialized
-  - lastTransitionTime: "2025-09-29T09:39:55Z"
-    message: ""
-    reason: FWConfigured
-    status: "True"
-    type: FWConfigured
-  - lastTransitionTime: "2025-09-29T09:39:55Z"
-    message: ""
+    observedGeneration: 3
     reason: BFBPrepared
     status: "True"
     type: BFBPrepared
-  - lastTransitionTime: "2025-09-29T09:47:53Z"
-    message: 'failed to get system: %!w(<nil>)'
-    reason: FailToGetSystem
-    status: "False"
+  - lastTransitionTime: "2026-02-11T16:58:01Z"
+    message: ""
+    observedGeneration: 3
+    reason: BFBReady
+    status: "True"
+    type: BFBReady
+  - lastTransitionTime: "2026-02-11T17:03:14Z"
+    message: ""
+    observedGeneration: 3
+    reason: BFBTransferred
+    status: "True"
+    type: BFBTransferred
+  - lastTransitionTime: "2026-02-11T17:52:27Z"
+    message: cluster configured
+    observedGeneration: 3
+    reason: DPUClusterReady
+    status: "True"
+    type: DPUClusterReady
+  - lastTransitionTime: "2026-02-11T16:58:05Z"
+    message: ""
+    observedGeneration: 3
+    reason: FWConfigured
+    status: "True"
+    type: FWConfigured
+  - lastTransitionTime: "2026-02-11T16:58:03Z"
+    message: ""
+    observedGeneration: 3
+    reason: InterfaceInitialized
+    status: "True"
+    type: InterfaceInitialized
+  - lastTransitionTime: "2026-02-11T16:58:02Z"
+    message: ""
+    observedGeneration: 3
+    reason: NoEffect
+    status: "True"
+    type: NodeEffectReady
+  - lastTransitionTime: "2026-02-11T17:52:27Z"
+    message: ""
+    observedGeneration: 3
+    reason: NodeEffectRemoved
+    status: "True"
+    type: NodeEffectRemoved
+  - lastTransitionTime: "2026-02-11T17:10:26Z"
+    message: OsStarting
+    observedGeneration: 3
+    reason: OemLastState
+    status: "True"
     type: OSInstalled
-  - lastTransitionTime: "2025-09-29T10:01:34Z"
+  - lastTransitionTime: "2026-02-11T16:58:01Z"
+    message: ""
+    observedGeneration: 2
+    reason: Initialized
+    status: "True"
+    type: Initialized
+  - lastTransitionTime: "2026-02-11T17:47:21Z"
     message: ""
     reason: Rebooted
     status: "True"
     type: Rebooted
-  - lastTransitionTime: "2025-09-29T10:01:34Z"
-    message: cluster configured
-    reason: DPUClusterReady
-    status: "True"
-    type: DPUClusterReady
-  - lastTransitionTime: "2025-09-29T10:01:34Z"
-    message: ""
-    reason: DPUReady
-    status: "True"
-    type: Ready
-  dpfVersion: v25.7.0
+  dpfVersion: v25.10.1
   dpuInstallInterface: redfish
+  dpuMode: dpu
   firmware: {}
+  observedGeneration: 3
   phase: Ready
 ```
 

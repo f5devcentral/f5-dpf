@@ -1,0 +1,43 @@
+apiVersion: k8s.f5.com/v1
+kind: CNEInstance
+metadata:
+  name: dpf-cneinstance
+spec:
+  #storageClassName: cephfs-rwx
+  product:
+    type: BNK
+    gatewayAPI: true
+    wholeCluster: true
+  certificate:
+    clusterIssuer: "bnk-ca-cluster-issuer"
+  manifestVersion: "${F5_BNK_MANIFEST_VERSION}"
+  registry:
+    uri: repo.f5.com
+    imagePullSecrets:
+    - name: far-secret
+  telemetry:
+    loggingSubsystem:
+      enabled: false
+    metricSubsystem:
+      enabled: false
+  deploymentSize: "Small"
+  # network attachement is required but not used in this case.
+  networkAttachments:
+    - dummy
+  dpu:
+    enabled: true
+    dpf:
+      enabled: true
+      dpuCluster:
+      - name: "dpu-cplane-tenant1"
+        namespace: "dpu-cplane-tenant1"
+# feature enablement section
+  #firewallACL:
+  #  enabled: false
+  dynamicRouting:
+    enabled: true
+  advanced:
+    cneController:
+      env:
+      - name: "OVN_MEG_ENABLED"
+        value: "true"

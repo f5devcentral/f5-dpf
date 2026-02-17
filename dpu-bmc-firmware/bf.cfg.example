@@ -1,0 +1,4 @@
+UPDATE_BMC_FW="no"
+BMC_USER="root"
+BMC_PASSWORD="changemeplease"
+BMC_REBOOT="no"
