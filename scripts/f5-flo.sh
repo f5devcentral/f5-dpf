@@ -70,6 +70,8 @@ type: kubernetes.io/dockerconfigjson
 EOF
 
   kubectl -n dpf-operator-system apply -f /tmp/far-secret.yaml
+  info "apply far-secret also to kamaji cluster ..."
+  kubectl --kubeconfig=./dpu-cplane-tenant1.kubeconfig -n dpf-operator-system apply -f /tmp/far-secret.yaml
   rm /tmp/far-secret.yaml
 
   export JWT=$(cat ~/.jwt)
@@ -102,7 +104,6 @@ EOF
   mv ~/cwc/f5-cert-gen ~/cwc/cert-gen
   pushd ~/cwc && sh cert-gen/gen_cert.sh -s=api-server -a=f5-spk-cwc.dpf-operator-system -n=1 && popd
   kubectl apply -f ~/cwc/cwc-license-certs.yaml -n dpf-operator-system
-
 
   echo ""
   echo "done"

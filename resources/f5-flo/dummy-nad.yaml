@@ -1,0 +1,14 @@
+---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: dummy-macvlan
+  namespace: default
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "type": "macvlan",
+    "master": "${DPUCLUSTER_INTERFACE}",
+    "mode": "bridge",
+    "ipam": { "type": "static" }
+  }'
