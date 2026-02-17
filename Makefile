@@ -23,6 +23,7 @@ cluster:
 
 local-storage:
 	scripts/local-path-provisioner.sh
+	scripts/storageclass.sh
 
 bfb-pv:
 	scripts/bfb-pv.sh
@@ -61,7 +62,7 @@ bnk:
 	scripts/decode-jwt.sh
 	scripts/multus.sh
 	scripts/f5-flo.sh
-	scripts/hbn-pf-tmm.sh
+	scripts/hbn-pf-dpf-tmm.sh
 
 delete-bnk:
 	scripts/hbn-pf-tmm.sh delete
