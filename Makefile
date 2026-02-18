@@ -2,7 +2,7 @@
 
 include .env
 
-all: cluster local-storage bfb-pv create-bmc-pwd dpf-operator dpf-system kamaji-kubeconfig
+all: cluster local-storage bfb-pv multus create-bmc-pwd dpf-operator dpf-system kamaji-kubeconfig
 	@echo ""
 	@echo "================================================================================"
 	@echo "✅ DPF Cluster Installation Complete!"
@@ -40,6 +40,9 @@ dpf-system:
 argocd:
 	scripts/argocd-expose.sh
 
+multus:
+	scripts/multus.sh
+
 passthru:
 	scripts/passthru-dpf-objects.sh
 
@@ -60,12 +63,11 @@ kamaji-kubeconfig:
 
 bnk:
 	scripts/decode-jwt.sh
-	scripts/multus.sh
 	scripts/f5-flo.sh
 	scripts/hbn-pf-dpf-tmm.sh
 
 delete-bnk:
-	scripts/hbn-pf-tmm.sh delete
+	scripts/hbn-pf-dpf-tmm.sh delete
 	scripts/f5-flo.sh delete
 	scripts/multus.sh delete
 

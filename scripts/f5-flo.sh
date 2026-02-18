@@ -47,33 +47,19 @@ build() {
   info "configure certificate management ..."
   kubectl apply -f resources/f5-flo/cluster-issuer.yaml
 
-  info "Install F5 Lifecycle Operator (FLO) ..."
-
   info "F5 Artifacts Registry (FAR) authentication token ..."
-
   # Create the SERVICE_ACCOUNT_K8S_SECRET variable by appending "_json_key_base64:" to the base64 encoded SERVICE_ACCOUNT_KEY
   SERVICE_ACCOUNT_K8S_SECRET=$(echo "_json_key_base64:${HELM_REPOSITORY_KEY}" | base64 -w 0)
+  DOCKERCONFIGJSON_B64=$(
+    printf '{"auths":{"%s":{"auth":"%s"}}}' \
+      "${REPO}" \
+      "${SERVICE_ACCOUNT_K8S_SECRET}" \
+      | base64 -w 0
+    )
+  export DOCKERCONFIGJSON_B64
+  envsubst < resources/f5-flo/far-secret.yaml | kubectl -n dpf-operator-system apply -f-
 
-  echo ""
-  echo "Create the secret.yaml file with the provided content ..."
-  cat << EOF > /tmp/far-secret.yaml
----
-apiVersion: v1
-kind: Secret
-metadata:
-  name: far-secret
-data:
-  .dockerconfigjson: $(echo "{\"auths\": {\
-\"${REPO}\":\
-{\"auth\": \"$SERVICE_ACCOUNT_K8S_SECRET\"}}}" | base64 -w 0)
-type: kubernetes.io/dockerconfigjson
-EOF
-
-  kubectl -n dpf-operator-system apply -f /tmp/far-secret.yaml
-  info "apply far-secret also to kamaji cluster ..."
-  kubectl --kubeconfig=./dpu-cplane-tenant1.kubeconfig -n dpf-operator-system apply -f /tmp/far-secret.yaml
-  rm /tmp/far-secret.yaml
-
+  info "render flo-value.yaml based on JWT prod/tst type ..."
   export JWT=$(cat ~/.jwt)
   if cut -d\. -f1 ~/.jwt | base64 -d | grep tst; then
     envsubst < resources/f5-flo/flo-value-tst.yaml >/tmp/flo-value.yaml
@@ -81,6 +67,7 @@ EOF
     envsubst < resources/f5-flo/flo-value.yaml >/tmp/flo-value.yaml
   fi
 
+  info "Install F5 Lifecycle Operator (FLO) ..."
   helm upgrade --install flo oci://${REPO}/charts/f5-lifecycle-operator --version $(get_chart_version f5-lifecycle-operator) -f /tmp/flo-value.yaml --namespace dpf-operator-system --wait --atomic
 
   # info "create cnemanifest ..." # missing from Wael's ailab repo, but

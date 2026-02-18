@@ -14,6 +14,17 @@ source .env
 : "${KWAIT_INTERVAL:=5}"    # seconds between polls
 
 build() {
+  info "install the NFS CSI driver into kube-system ..."
+  helm repo add csi-driver-nfs https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+  helm repo update
+
+  helm upgrade --install csi-driver-nfs csi-driver-nfs/csi-driver-nfs \
+    --namespace kube-system --create-namespace --set kubeletDir=/var/lib/k0s/kubelet
+
+  info "verify it registered"
+  kubectl get csidrivers | grep -i nfs
+  kubectl -n kube-system get pods -o wide | egrep -i 'nfs|csi'
+
   info "create nfs storageclass ..."
   if ! cat resources/storageclass.yaml | envsubst | kubectl apply -f-; then
     err "Applying manifests failed"; return 1
@@ -22,6 +33,7 @@ build() {
 
 delete() {
   kubectl delete -f ./resources/storageclass.yaml
+  helm delete csi-driver-nfs --namespace kube-system
 }
 
 case "${1:-build}" in

@@ -40,8 +40,9 @@ spec:
     - biosdevname=0
     - iommu.passthrough=1
     - cgroup_no_v1=net_prio,net_cls
+    - default_hugepagesz=2M
     - hugepagesz=2048kB
-    - hugepages=3072
+    - hugepages=4096
   nvconfig:
   - device: '*'
     parameters:

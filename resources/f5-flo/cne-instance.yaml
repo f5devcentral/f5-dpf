@@ -7,7 +7,7 @@ spec:
   product:
     type: BNK
     gatewayAPI: true
-  wholeCluster: true
+ #  wholeCluster: true
   storageClassName: nfs
   certificate:
     clusterIssuer: "bnk-ca-cluster-issuer"
