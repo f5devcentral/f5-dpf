@@ -1,0 +1,22 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceIPAM
+metadata:
+  name: mgx-tenant
+  namespace: dpf-operator-system
+spec:
+ ipv4Subnet:
+   subnet: "10.0.140.0/24"
+   perNodeIPCount: 4
+   gateway: 10.0.140.254
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceIPAM
+metadata:
+  name: mgx-tmm
+  namespace: dpf-operator-system
+spec:
+ ipv4Subnet:
+   subnet: "172.27.1.0/24"
+   perNodeIPCount: 4
+   gateway: 172.27.1.1

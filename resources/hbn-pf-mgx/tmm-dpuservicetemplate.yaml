@@ -1,0 +1,48 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceTemplate
+metadata:
+  name: mgx-tmm
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: "mgx-tmm"
+  helmChart:
+    source:
+      repoURL: oci://repo.f5.com
+      chart: charts/f5-tmm
+      version: 15.82.0-0.2.50
+    values:
+      dpf:
+        enabled: true
+      wholeClusterMode:
+        enabled: true
+      global:
+        imageCredentials:
+          name: far-secret
+        dnsx:
+          enabled: false
+        afm:
+          enabled: false
+          pccd:
+            enabled: false
+        dwbld:
+          enabled: false
+        gslb:
+          enabled: false
+        bdosd:
+          enabled: false
+        urlcat:
+          enabled: false
+        f5-toda-logging:
+          enabled: false
+      enabled: true
+      exposedPorts:
+        configview: true
+        grpc-0: true
+        grpc-port-tmm: true
+        grpc-port-debug: true
+        grpc-port-dynamic-routing: true
+        grpc-port-tmrouted: true
+        grpc-port-blobd: true
+        grpc-port-observer: true
+        observer-grpc: true

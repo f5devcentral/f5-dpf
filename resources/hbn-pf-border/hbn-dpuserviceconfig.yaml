@@ -1,0 +1,258 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceConfiguration
+metadata:
+  name: border-hbn
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: "border-hbn"
+  interfaces:
+    - name: p0_if
+      network: mybrhbn
+    - name: p1_if
+      network: mybrhbn
+    - name: pf0hpf_if
+      network: mybrhbn
+    - name: sf2tmm_if
+      network: mybrhbn
+  serviceConfiguration:
+    serviceDaemonSet:
+      annotations:
+        k8s.v1.cni.cncf.io/networks: |-
+          [
+          {"name": "iprequest", "interface": "ip_lo", "cni-args": {"poolNames": ["border-loopback"], "poolType": "cidrpool"}},
+          {"name": "iprequest", "interface": "ip_sf2tmm", "cni-args": {"poolNames": ["border-tmm"], "poolType": "ippool"}},
+          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["border-tenant"], "poolType": "ippool"}}
+          ]
+    helmChart:
+      values:
+        configuration:
+          perDPUValuesYAML: |
+            - hostnamePattern: "*"
+              values:
+                bgp_peer_group: hbn
+                tenant_vlan: 201
+                tenant_l2_vni: 10201
+                tenant_vrf: tenant
+                tenant_l3_vni: 100201
+                tmm_vlan: 300
+                tmm_l2_vni: 10300
+                tmm_vrf: tmm
+                tmm_l3_vni: 100300
+                border_vlan: 60
+                border_vrf: border
+                border_vni: 400000
+          startupYAMLJ2: |
+            {% macro asnFromIP(
+                ipName=config.asnIPName | default("ip_lo"),
+                offset=config.asnOffset | default(65512),
+                step=config.asnStep | default(1)
+              ) -%}
+              {{ ((ipaddresses[ipName].ip.split(".")[2] | int) * 256
+                  + (ipaddresses[ipName].ip.split(".")[3] | int)) * (step | int)
+                  + (offset | int) }}
+            {%- endmacro %}
+
+            {% macro anycastMacFromIP(
+                ipName=config.anycastMacIPName | default("ip_lo"),
+                prefix=config.anycastMacPrefix | default("44:38:44:f5"),
+                offset=config.anycastMacOffset | default(0)
+              ) -%}
+              {%- set o3 = ipaddresses[ipName].ip.split(".")[2] | int -%}
+              {%- set o4 = ipaddresses[ipName].ip.split(".")[3] | int -%}
+              {%- set v  = (o3 * 256 + o4 + (offset | int)) % 65536 -%}
+              {%- set hi = (v // 256) % 256 -%}
+              {%- set lo = v % 256 -%}
+              {{ prefix }}:{{ "%02x" | format(hi) }}:{{ "%02x" | format(lo) }}
+            {%- endmacro %}
+            {% set HBN_ASN = asnFromIP(offset=65512) | int %}
+            {% set HBN_ANYCAST_MAC = anycastMacFromIP(prefix="44:38:39:f5") %}
+            - header:
+                model: bluefield
+                nvue-api-version: nvue_v1
+                rev-id: 1.0
+                version: HBN 2.4.0
+            - set:
+                bridge:
+                  domain:
+                    br_default:
+                      encap: 802.1Q
+                      type: vlan-aware
+                      vlan:
+                        {{ config.tenant_vlan }}:
+                          vni:
+                            {{ config.tenant_l2_vni }}:
+                              flooding:
+                                enable: auto
+                              mac-learning: off
+                        {{ config.tmm_vlan }}:
+                          vni:
+                            {{ config.tmm_l2_vni }}:
+                              flooding:
+                                enable: auto
+                              mac-learning: off
+                evpn:
+                  enable: on
+                interface:
+                  lo:
+                    ip:
+                      address:
+                        {{ ipaddresses.ip_lo.ip }}/32: {}
+                    type: loopback
+                  p0_if,p1_if,pf0hpf_if,sf2tmm_if:
+                    type: swp
+                  p0_if,p1_if,pf0hpf_if,sf2tmm_if,vlan{{ config.tenant_vlan }},{{ config.tmm_vlan }}:
+                    link:
+                      mtu: 9000
+                  pf0hpf_if:
+                    bridge:
+                      domain:
+                        br_default:
+                          access: {{ config.tenant_vlan }}
+                  sf2tmm_if:
+                    bridge:
+                      domain:
+                        br_default:
+                          access: {{ config.tmm_vlan }}
+                  vlan{{ config.tenant_vlan }}:
+                    ip:
+                      address:
+                        {{ ipaddresses.ip_pf0hpf.cidr }}: {}
+                      vrf: {{ config.tenant_vrf }}
+                      vrr:
+                        address:
+                          10.0.140.254/24: {}
+                    vlan: {{ config.tenant_vlan }}
+                  vlan{{ config.tenant_vlan }},{{ config.tmm_vlan }}:
+                    base-interface: br_default
+                    ip:
+                      ipv4:
+                        forward: on
+                      ipv6:
+                        forward: on
+                      vrr:
+                        enable: on
+                        state:
+                          up: {}
+                    type: svi
+                  vlan{{ config.tmm_vlan }}:
+                    ip:
+                      address:
+                        {{ ipaddresses.ip_sf2tmm.cidr }}: {}
+                      vrf: {{ config.tmm_vrf }}
+                      vrr:
+                        address:
+                          172.27.1.254/24: {}
+                    vlan: {{ config.tmm_vlan }}
+                nve:
+                  vxlan:
+                    arp-nd-suppress: on
+                    enable: on
+                    mac-learning: off
+                    source:
+                      address: {{ ipaddresses.ip_lo.ip }}
+                router:
+                  bgp:
+                    autonomous-system: {{ HBN_ASN }}
+                    enable: on
+                    graceful-restart:
+                      mode: full
+                    router-id: {{ ipaddresses.ip_lo.ip }}
+                  vrr:
+                    enable: on
+                system:
+                  global:
+                    anycast-mac: {{ HBN_ANYCAST_MAC }}
+                vrf:
+                  default:
+                    router:
+                      bgp:
+                        address-family:
+                          ipv4-unicast:
+                            enable: on
+                            redistribute:
+                              connected:
+                                enable: on
+                          ipv6-unicast:
+                            enable: on
+                            redistribute:
+                              connected:
+                                enable: on
+                        enable: on
+                        neighbor:
+                          p0_if:
+                            peer-group: {{ config.bgp_peer_group }}
+                            type: unnumbered
+                          p1_if:
+                            peer-group: {{ config.bgp_peer_group }}
+                            type: unnumbered
+                        path-selection:
+                          multipath:
+                            aspath-ignore: on
+                        peer-group:
+                          hbn:
+                            address-family:
+                              l2vpn-evpn:
+                                add-path-tx: off
+                                enable: on
+                            remote-as: external
+                  {{ config.tenant_vrf }}:
+                    evpn:
+                      enable: on
+                      vni:
+                        {{ config.tenant_l3_vni }}: {}
+                    router:
+                      bgp:
+                        address-family:
+                          ipv4-unicast:
+                            enable: on
+                            redistribute:
+                              connected:
+                                enable: on
+                            route-export:
+                              to-evpn:
+                                enable: on
+                          l2vpn-evpn:
+                            enable: on
+                        autonomous-system: {{ HBN_ASN }}
+                        enable: on
+                        route-export:
+                          to-evpn:
+                            route-target:
+                              {{ HBN_ASN }}:{{ config.tenant_l3_vni }}: {}
+                        route-import:
+                          from-evpn:
+                            route-target:
+                              ANY:{{ config.border_vni }}: {}
+                              auto: {}
+                        router-id: {{ ipaddresses.ip_lo.ip }}
+                  {{ config.tmm_vrf }}:
+                    evpn:
+                      enable: on
+                      vni:
+                        {{ config.tmm_l3_vni }}: {}
+                    router:
+                      bgp:
+                        address-family:
+                          ipv4-unicast:
+                            enable: on
+                            redistribute:
+                              connected:
+                                enable: on
+                            route-export:
+                              to-evpn:
+                                enable: on
+                          l2vpn-evpn:
+                            enable: on
+                        autonomous-system: {{ HBN_ASN }}
+                        enable: on
+                        route-export:
+                          to-evpn:
+                            route-target:
+                              {{ HBN_ASN }}:{{ config.tmm_l3_vni }}: {}
+                        route-import:
+                          from-evpn:
+                            route-target:
+                              ANY:{{ config.border_vni }}: {}
+                              auto: {}
+                        router-id: {{ ipaddresses.ip_lo.ip }}

@@ -1,0 +1,63 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUDeployment
+metadata:
+  name: mgx-hbn
+  namespace: dpf-operator-system
+spec:
+  dpus:
+    bfb: bf-bundle-v25.10.1-2.9
+    flavor: mgx-$DPF_VERSION
+    nodeEffect:
+      noEffect: true
+    dpuSets:
+    - nameSuffix: "mgx"
+      nodeSelector:
+        matchLabels:
+          feature.node.kubernetes.io/dpu-enabled: "true"
+      dpuSelector:
+        provisioning.dpu.nvidia.com/dpudevice-service-name: mgx
+  services:
+    mgx-hbn:
+      serviceTemplate: mgx-hbn
+      serviceConfiguration: mgx-hbn
+    mgx-tmm:
+      serviceConfiguration: mgx-tmm
+      serviceTemplate: mgx-tmm
+  serviceChains:
+    switches:
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: p0
+        - service:
+            name: mgx-hbn
+            interface: p0_if
+        serviceMTU: 9000
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: p1
+        - service:
+            name: mgx-hbn
+            interface: p1_if
+        serviceMTU: 9000
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: pf0hpf
+        - service:
+            name: mgx-hbn
+            interface: pf0hpf_if
+        - service:
+            name: mgx-tmm
+            interface: internal
+        serviceMTU: 9000
+      - ports:
+        - service:
+            name: mgx-tmm
+            interface: external
+        - service:
+            name: mgx-hbn
+            interface: sf2tmm_if
+        serviceMTU: 9000

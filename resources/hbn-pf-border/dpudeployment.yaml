@@ -1,0 +1,57 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUDeployment
+metadata:
+  name: border-hbn
+  namespace: dpf-operator-system
+spec:
+  dpus:
+    bfb: bf-bundle-v25.10.1-2.9
+    flavor: border-v25.10.1
+    nodeEffect:
+      noEffect: true
+    dpuSets:
+    - nameSuffix: "border"
+      nodeSelector:
+        matchLabels:
+          feature.node.kubernetes.io/dpu-enabled: "true"
+      dpuSelector:
+        provisioning.dpu.nvidia.com/dpudevice-service-name: border
+  services:
+    border-hbn:
+      serviceTemplate: border-hbn
+      serviceConfiguration: border-hbn
+  serviceChains:
+    switches:
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: p0
+        - service:
+            name: border-hbn
+            interface: p0_if
+        serviceMTU: 9000
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: p1
+        - service:
+            name: border-hbn
+            interface: p1_if
+        serviceMTU: 9000
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: pf0hpf
+        - service:
+            name: border-hbn
+            interface: pf0hpf_if
+        serviceMTU: 9000
+      - ports:
+        - serviceInterface:
+            matchLabels:
+              interface: pf1hpf
+        - service:
+            name: border-hbn
+            interface: pf1hpf_if
+        serviceMTU: 9000

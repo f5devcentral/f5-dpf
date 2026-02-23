@@ -64,12 +64,18 @@ kamaji-kubeconfig:
 bnk:
 	scripts/decode-jwt.sh
 	scripts/f5-flo.sh
-	scripts/hbn-pf-dpf-tmm.sh
 
 delete-bnk:
 	scripts/hbn-pf-dpf-tmm.sh delete
 	scripts/f5-flo.sh delete
 	scripts/multus.sh delete
+
+ailab: bnk
+	scripts/ailab.sh
+	scripts/label-nodes.sh
+
+delete-ailab:
+	scripts/ailab.sh delete
 
 clean-all:
 	scripts/k0s-cluster.sh delete

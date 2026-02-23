@@ -1,0 +1,54 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceNAD
+metadata:
+  name: mybrsfc-hbn-trusted
+  namespace: dpf-operator-system
+  annotations:
+    dpuservicenad.svc.dpu.nvidia.com/use-trusted-sfs: ""
+spec:
+  resourceType: sf
+  bridge: br-sfc
+  ipam: false
+  serviceMTU: 9000
+  chainedCNIs:
+    - type: rdma
+
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceTemplate
+metadata:
+  name: tmm-sfc
+  namespace: dpf-operator-system
+spec:
+  deploymentServiceName: tmm-sfc
+  helmChart:
+    source:
+      repoURL: oci://repo.f5.com
+      chart: charts/f5-tmm
+      version: 15.82.0-0.2.50
+    values:
+      dpf:
+        enabled: true
+      wholeClusterMode:
+        enabled: true
+      global:
+        imageCredentials:
+          name: far-secret
+        dnsx:
+          enabled: false
+        afm:
+          enabled: false
+          pccd:
+            enabled: false
+        dwbld:
+          enabled: false
+        gslb:
+          enabled: false
+        bdosd:
+          enabled: false
+        urlcat:
+          enabled: false
+        f5-toda-logging:
+          enabled: false
+      enabled: true

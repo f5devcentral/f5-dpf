@@ -1,71 +1,16 @@
 ---
 apiVersion: svc.dpu.nvidia.com/v1alpha1
-kind: DPUServiceNAD
-metadata:
-  name: mybrsfc-hbn-trusted
-  namespace: dpf-operator-system
-  annotations:
-    dpuservicenad.svc.dpu.nvidia.com/use-trusted-sfs: ""
-spec:
-  resourceType: sf
-  bridge: br-sfc
-  ipam: false
-  serviceMTU: 9000
-  chainedCNIs:
-    - type: rdma
-
----
-apiVersion: svc.dpu.nvidia.com/v1alpha1
-kind: DPUServiceTemplate
-metadata:
-  name: tmm-sfc
-  namespace: dpf-operator-system
-spec:
-  deploymentServiceName: tmm-sfc
-  helmChart:
-    source:
-      repoURL: oci://repo.f5.com
-      chart: charts/f5-tmm
-      version: 15.82.0-0.2.50
-    values:
-      dpf:
-        enabled: true
-      wholeClusterMode:
-        enabled: true
-      global:
-        imageCredentials:
-          name: far-secret
-        dnsx:
-          enabled: false
-        afm:
-          enabled: false
-          pccd:
-            enabled: false
-        dwbld:
-          enabled: false
-        gslb:
-          enabled: false
-        bdosd:
-          enabled: false
-        urlcat:
-          enabled: false
-        f5-toda-logging:
-          enabled: false
-      enabled: true
-
----
-apiVersion: svc.dpu.nvidia.com/v1alpha1
 kind: DPUServiceConfiguration
 metadata:
-  name: tmm-sfc
+  name: mgx-tmm
   namespace: dpf-operator-system
 spec:
-  deploymentServiceName: tmm-sfc
+  deploymentServiceName: "mgx-tmm"
   interfaces:
-    - name: external
-      network: mybrsfc-hbn-trusted
     - name: internal
-      network: mybrsfc-hbn-trusted
+      network: mybrsfc-tmm
+    - name: external
+      network: mybrsfc-tmm
   serviceConfiguration:
     serviceDaemonSet:
       resources:
@@ -74,9 +19,11 @@ spec:
         cpu: "2"
         nvidia.com/bf_sf_trusted: 2
       annotations:
-        k8s.v1.cni.cncf.io/networks: |
-          []
-#            {"name": "iprequest", "interface": "ip_external", "cni-args": {"poolNames": ["pool1"], "poolType": "cidrpool", "allocateDefaultGateway": true}}
+        k8s.v1.cni.cncf.io/networks: |-
+          [
+            {"name": "iprequest", "interface": "ip_internal", "cni-args": {"poolNames": ["mgx-tenant"], "poolType": "ippool"}},
+            {"name": "iprequest", "interface": "ip_external", "cni-args": {"poolNames": ["mgx-tmm"], "poolType": "ippool"}}
+          ]
     configPorts:
       serviceType: NodePort
       ports:

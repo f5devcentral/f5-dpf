@@ -1,0 +1,8 @@
+---
+apiVersion: provisioning.dpu.nvidia.com/v1alpha1
+kind: BFB
+metadata:
+  name: bf-bundle-v25.10.1-2.9
+  namespace: dpf-operator-system
+spec:
+  url: https://content.mellanox.com/BlueField/BFBs/Ubuntu22.04/bf-bundle-2.9.4-38_25.12_ubuntu-22.04_prod.bfb
