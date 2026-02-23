@@ -1,0 +1,38 @@
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceInterface
+metadata:
+  name: pf0vf0-rep
+  namespace: dpf-operator-system
+spec:
+  template:
+    spec:
+      template:
+        metadata:
+          labels:
+            interface: "pf0vf0"
+        spec:
+          interfaceType: vf
+          vf:
+            parentInterfaceRef: p0
+            pfID: 0
+            vfID: 0
+---
+apiVersion: svc.dpu.nvidia.com/v1alpha1
+kind: DPUServiceInterface
+metadata:
+  name: pf0vf1-rep
+  namespace: dpf-operator-system
+spec:
+  template:
+    spec:
+      template:
+        metadata:
+          labels:
+            interface: "pf0vf1"
+        spec:
+          interfaceType: vf
+          vf:
+            parentInterfaceRef: p0
+            pfID: 0
+            vfID: 1

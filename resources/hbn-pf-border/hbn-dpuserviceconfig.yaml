@@ -11,7 +11,7 @@ spec:
       network: mybrhbn
     - name: p1_if
       network: mybrhbn
-    - name: pf0hpf_if
+    - name: sf2internet_if
       network: mybrhbn
     - name: sf2tmm_if
       network: mybrhbn
@@ -22,7 +22,7 @@ spec:
           [
           {"name": "iprequest", "interface": "ip_lo", "cni-args": {"poolNames": ["border-loopback"], "poolType": "cidrpool"}},
           {"name": "iprequest", "interface": "ip_sf2tmm", "cni-args": {"poolNames": ["border-tmm"], "poolType": "ippool"}},
-          {"name": "iprequest", "interface": "ip_pf0hpf", "cni-args": {"poolNames": ["border-tenant"], "poolType": "ippool"}}
+          {"name": "iprequest", "interface": "ip_sf2internet", "cni-args": {"poolNames": ["border-internet"], "poolType": "ippool"}}
           ]
     helmChart:
       values:
@@ -31,17 +31,16 @@ spec:
             - hostnamePattern: "*"
               values:
                 bgp_peer_group: hbn
-                tenant_vlan: 201
-                tenant_l2_vni: 10201
-                tenant_vrf: tenant
-                tenant_l3_vni: 100201
+                border_internet_vlan: 302
+                border_internet_l2_vni: 10302
+                border_internet_vrf: border_internet
+                border_internet_l3_vni: 100302
+                internet_vni: 245245
                 tmm_vlan: 300
                 tmm_l2_vni: 10300
                 tmm_vrf: tmm
                 tmm_l3_vni: 100300
-                border_vlan: 60
-                border_vrf: border
-                border_vni: 400000
+                tenant_tmm_l3_vni: 100202
           startupYAMLJ2: |
             {% macro asnFromIP(
                 ipName=config.asnIPName | default("ip_lo"),
@@ -79,9 +78,9 @@ spec:
                       encap: 802.1Q
                       type: vlan-aware
                       vlan:
-                        {{ config.tenant_vlan }}:
+                        {{ config.border_internet_vlan }}:
                           vni:
-                            {{ config.tenant_l2_vni }}:
+                            {{ config.border_internet_l2_vni }}:
                               flooding:
                                 enable: auto
                               mac-learning: off
@@ -99,31 +98,31 @@ spec:
                       address:
                         {{ ipaddresses.ip_lo.ip }}/32: {}
                     type: loopback
-                  p0_if,p1_if,pf0hpf_if,sf2tmm_if:
+                  p0_if,p1_if,sf2internet_if,sf2tmm_if:
                     type: swp
-                  p0_if,p1_if,pf0hpf_if,sf2tmm_if,vlan{{ config.tenant_vlan }},{{ config.tmm_vlan }}:
+                  p0_if,p1_if,sf2internet_if,sf2tmm_if,vlan{{ config.border_internet_vlan }},{{ config.tmm_vlan }}:
                     link:
                       mtu: 9000
-                  pf0hpf_if:
+                  sf2internet_if:
                     bridge:
                       domain:
                         br_default:
-                          access: {{ config.tenant_vlan }}
+                          access: {{ config.border_internet_vlan }}
                   sf2tmm_if:
                     bridge:
                       domain:
                         br_default:
                           access: {{ config.tmm_vlan }}
-                  vlan{{ config.tenant_vlan }}:
+                  vlan{{ config.border_internet_vlan }}:
                     ip:
                       address:
-                        {{ ipaddresses.ip_pf0hpf.cidr }}: {}
-                      vrf: {{ config.tenant_vrf }}
+                        {{ ipaddresses.ip_sf2internet.cidr }}: {}
+                      vrf: {{ config.border_internet_vrf }}
                       vrr:
                         address:
-                          10.0.140.254/24: {}
-                    vlan: {{ config.tenant_vlan }}
-                  vlan{{ config.tenant_vlan }},{{ config.tmm_vlan }}:
+                          10.0.200.254/24: {}
+                    vlan: {{ config.border_internet_vlan }}
+                  vlan{{ config.border_internet_vlan }},{{ config.tmm_vlan }}:
                     base-interface: br_default
                     ip:
                       ipv4:
@@ -142,7 +141,7 @@ spec:
                       vrf: {{ config.tmm_vrf }}
                       vrr:
                         address:
-                          172.27.1.254/24: {}
+                          172.27.2.254/24: {}
                     vlan: {{ config.tmm_vlan }}
                 nve:
                   vxlan:
@@ -196,11 +195,11 @@ spec:
                                 add-path-tx: off
                                 enable: on
                             remote-as: external
-                  {{ config.tenant_vrf }}:
+                  {{ config.border_internet_vrf }}:
                     evpn:
                       enable: on
                       vni:
-                        {{ config.tenant_l3_vni }}: {}
+                        {{ config.border_internet_l3_vni }}: {}
                     router:
                       bgp:
                         address-family:
@@ -219,11 +218,11 @@ spec:
                         route-export:
                           to-evpn:
                             route-target:
-                              {{ HBN_ASN }}:{{ config.tenant_l3_vni }}: {}
+                              {{ HBN_ASN }}:{{ config.border_internet_l3_vni }}: {}
                         route-import:
                           from-evpn:
                             route-target:
-                              ANY:{{ config.border_vni }}: {}
+                              ANY:{{ config.internet_vni }}: {}
                               auto: {}
                         router-id: {{ ipaddresses.ip_lo.ip }}
                   {{ config.tmm_vrf }}:
@@ -253,6 +252,6 @@ spec:
                         route-import:
                           from-evpn:
                             route-target:
-                              ANY:{{ config.border_vni }}: {}
+                              ANY:{{ config.tenant_tmm_l3_vni }}: {}
                               auto: {}
                         router-id: {{ ipaddresses.ip_lo.ip }}

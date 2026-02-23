@@ -42,16 +42,16 @@ spec:
       - ports:
         - serviceInterface:
             matchLabels:
-              interface: pf0hpf
+              interface: pf0vf0
         - service:
             name: border-hbn
-            interface: pf0hpf_if
+            interface: sf2tmm_if
         serviceMTU: 9000
       - ports:
         - serviceInterface:
             matchLabels:
-              interface: pf1hpf
+              interface: pf0vf1
         - service:
             name: border-hbn
-            interface: pf1hpf_if
+            interface: sf2internet_if
         serviceMTU: 9000

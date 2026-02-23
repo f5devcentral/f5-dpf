@@ -32,14 +32,14 @@ spec:
               values:
                 bgp_peer_group: hbn
                 tenant_vlan: 201
-                tenant_l2_vni: 10201
+                tenant_l2_vni: 10200
                 tenant_vrf: tenant
-                tenant_l3_vni: 100201
-                tmm_vlan: 300
-                tmm_l2_vni: 10300
+                tenant_l3_vni: 100200
+                tmm_vlan: 202
+                tmm_l2_vni: 10202
                 tmm_vrf: tmm
-                tmm_l3_vni: 100300
-                border_vni: 400000
+                tmm_l3_vni: 100202
+                border_vni: 100300
           startupYAMLJ2: |
             {% macro asnFromIP(
                 ipName=config.asnIPName | default("ip_lo"),
@@ -218,11 +218,6 @@ spec:
                           to-evpn:
                             route-target:
                               {{ HBN_ASN }}:{{ config.tenant_l3_vni }}: {}
-                        route-import:
-                          from-evpn:
-                            route-target:
-                              ANY:{{ config.border_vni }}: {}
-                              auto: {}
                         router-id: {{ ipaddresses.ip_lo.ip }}
                   {{ config.tmm_vrf }}:
                     evpn:
