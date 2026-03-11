@@ -10,7 +10,7 @@ spec:
       feature.node.kubernetes.io/dpu-enabled: "true"
   dpuTemplate:
     spec:
-      dpuFlavor: passthrough
+      dpuFlavor: passthru-$DPF_VERSION
       bfb:
         name: "bf-bundle"
       nodeEffect:

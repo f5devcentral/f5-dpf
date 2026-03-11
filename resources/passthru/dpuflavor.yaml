@@ -2,7 +2,7 @@
 apiVersion: provisioning.dpu.nvidia.com/v1alpha1
 kind: DPUFlavor
 metadata:
-  name: passthrough
+  name: passthru-$DPF_VERSION
   namespace: dpf-operator-system
 spec:
   dpuMode: zero-trust
@@ -16,6 +16,7 @@ spec:
     - biosdevname=0
     - iommu.passthrough=1
     - cgroup_no_v1=net_prio,net_cls
+    - default_hugepagesz=2M
     - hugepagesz=2048kB
     - hugepages=3072
   nvconfig:
